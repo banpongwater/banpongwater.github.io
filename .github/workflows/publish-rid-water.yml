@@ -1,45 +1,39 @@
-name: Publish RID water data
+name: Refresh Ban Pong RID data
 
 on:
-  push:
-    branches: [main]
   schedule:
     - cron: "*/10 * * * *"
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
-  group: github-pages
+  group: ban-pong-rid-refresh
   cancel-in-progress: false
 
 jobs:
-  build:
+  refresh:
     runs-on: ubuntu-latest
     steps:
       - name: Check out site
         uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
 
-      - name: Fetch latest RID telemetry
+      - name: Fetch latest Ban Pong RID telemetry
         run: node fetch-rid-data.mjs
         continue-on-error: true
 
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload site artifact
-        uses: actions/upload-pages-artifact@v3
-
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Deploy site
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Publish changed water snapshot
+        run: |
+          if git diff --quiet -- water-data.json; then
+            echo "No new Ban Pong data; keeping the existing snapshot."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add water-data.json
+          git commit -m "Refresh Ban Pong RID water data"
+          git push origin HEAD:main
