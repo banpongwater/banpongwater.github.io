@@ -71,7 +71,7 @@
     .map-note { position: absolute; right: 12px; bottom: 25px; z-index: 500; padding: 6px 9px; border-radius: 4px; background: rgba(255,255,255,.91); color: #64716c; font-size: 10px; }
     .map-note a { color: #315f58; text-decoration: none; }
     .map-note a:hover { text-decoration: underline; }
-    .district-outline { fill: #167c72; fill-opacity: .07; color: #167c72; weight: 3; opacity: .9; }
+    .leaflet-overlay-pane path { filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .85)); }
     .leaflet-control-layers { border: 1px solid rgba(32,43,43,.12) !important; border-radius: 5px !important; box-shadow: 0 2px 12px rgba(32,43,43,.12) !important; font-family: "IBM Plex Sans Thai", sans-serif; font-size: 12px; }
     .leaflet-control-layers-expanded { padding: 9px 11px; }
     .leaflet-control-layers label { margin: 4px 0; }
@@ -328,12 +328,12 @@
           const banPongFeature = boundaryData.features.find((feature) => feature.properties.shapeName === "Ban Pong");
           if (!banPongFeature) throw new Error("Ban Pong boundary is missing");
           const boundaryLayer = L.geoJSON(banPongFeature, {
-            style: { color: "#167c72", weight: 3, opacity: 0.9, fillColor: "#37a99b", fillOpacity: 0.07 }
+            style: { color: "#ffe34d", weight: 4, opacity: 1, fillColor: "#30c5b5", fillOpacity: 0.12 }
           });
           boundaryLayer.bindPopup('<div class="popup-title">ขอบเขตอำเภอบ้านโป่ง</div><div class="popup-detail">geoBoundaries ADM2 · ข้อมูลปี 2019<br>ที่มา: Royal Thai Survey Department, OCHA ROAP · CC BY 3.0 IGO</div>');
           boundaryLayer.addTo(map);
           layerControl.addOverlay(boundaryLayer, "ขอบเขตอำเภอบ้านโป่ง (geoBoundaries)");
-          map.fitBounds(boundaryLayer.getBounds(), { padding: [24, 24], maxZoom: 12 });
+          map.fitBounds(boundaryLayer.getBounds(), { padding: [28, 28], maxZoom: 11 });
         })
         .catch(() => {
           document.querySelector("#map-error").textContent = "โหลดแนวเขตอำเภอไม่ได้ · ยังใช้แผนที่และสถานีได้ตามปกติ";
