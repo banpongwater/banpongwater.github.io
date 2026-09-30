@@ -44,6 +44,7 @@
     .header-meta { display: flex; align-items: center; gap: 10px; }
     .prototype-pill { display: inline-flex; align-items: center; gap: 7px; padding: 7px 11px; border: 1px solid #ead9ae; border-radius: 5px; color: #7b5a16; background: #fff8e8; font-size: 12px; font-weight: 600; white-space: nowrap; }
     .prototype-pill .material { font-size: 17px; }
+    .source-pill { border-color: #c9e1d8; color: #176e62; background: #edf7f2; }
     .updated { color: var(--muted); font-size: 12px; text-align: right; line-height: 1.6; }
     .updated strong { color: var(--ink); font-weight: 600; }
     main { max-width: 1480px; margin: auto; padding: 0 24px 28px; }
@@ -108,6 +109,8 @@
     .empty-state { display: none; padding: 30px 18px; color: var(--muted); font-size: 12px; text-align: center; }
     .panel-foot { padding: 11px 16px; border-top: 1px solid var(--line); color: #76817d; background: #fbfcfa; font-size: 10px; line-height: 1.6; }
     .panel-foot strong { color: #655222; font-weight: 600; }
+    .panel-foot #source-status { display: block; white-space: pre-line; }
+    .panel-foot #source-status[data-quality="problem"] { color: #8a5a0b; }
     .material { font-family: "Material Symbols Outlined"; font-weight: normal; font-style: normal; font-size: 20px; line-height: 1; display: inline-block; white-space: nowrap; direction: ltr; -webkit-font-feature-settings: "liga"; -webkit-font-smoothing: antialiased; font-feature-settings: "liga"; }
     .station-pin { width: 22px; height: 22px; border: 3px solid #fff; border-radius: 50%; background: var(--green); box-shadow: 0 2px 7px rgba(18,38,34,.35), 0 0 0 1px rgba(25,52,44,.16); }
     .station-pin.watch { background: var(--amber); }
@@ -167,27 +170,27 @@
       </div>
     </div>
     <div class="header-meta">
-      <div class="updated">อัปเดตล่าสุด<br><strong id="updated-time">กำลังโหลด...</strong></div>
-      <div class="prototype-pill"><span class="material">science</span>ข้อมูลสาธิต</div>
+      <div class="updated">ตรวจข้อมูลจาก RID ล่าสุด<br><strong id="updated-time">กำลังโหลด...</strong></div>
+      <div class="prototype-pill source-pill"><span class="material">sensors</span>ข้อมูล RID</div>
     </div>
   </header>
   <main>
-    <section class="summary" aria-label="สรุปสถานีตัวอย่าง">
+    <section class="summary" aria-label="สรุปข้อมูลสถานีกรมชลประทาน">
       <div class="summary-item">
         <div class="summary-icon"><span class="material">sensors</span></div>
-        <div><div class="summary-label">สถานีตัวอย่าง</div><div class="summary-value">4 <small>จุด</small></div></div>
+        <div><div class="summary-label">สถานี RID</div><div class="summary-value"><span id="summary-total">0</span> <small>จุด</small></div></div>
       </div>
       <div class="summary-item warning">
         <div class="summary-icon"><span class="material">warning</span></div>
-        <div><div class="summary-label">เฝ้าระวัง (สาธิต)</div><div class="summary-value">1 <small>จุด</small></div></div>
+        <div><div class="summary-label">ตรวจสอบข้อมูล</div><div class="summary-value"><span id="summary-watch">0</span> <small>จุด</small></div></div>
       </div>
       <div class="summary-item alert">
         <div class="summary-icon"><span class="material">error</span></div>
-        <div><div class="summary-label">เตือนภัย (สาธิต)</div><div class="summary-value">1 <small>จุด</small></div></div>
+        <div><div class="summary-label">สูงกว่าตลิ่ง</div><div class="summary-value"><span id="summary-alert">0</span> <small>จุด</small></div></div>
       </div>
       <div class="summary-item normal">
         <div class="summary-icon"><span class="material">check_circle</span></div>
-        <div><div class="summary-label">ปกติ (สาธิต)</div><div class="summary-value">2 <small>จุด</small></div></div>
+        <div><div class="summary-label">ต่ำกว่าตลิ่ง</div><div class="summary-value"><span id="summary-normal">0</span> <small>จุด</small></div></div>
       </div>
     </section>
     <section class="workspace" aria-label="แผนที่และสถานีเฝ้าระวัง">
@@ -204,8 +207,8 @@
       </div>
       <aside class="side-panel">
         <div class="panel-head">
-          <div class="panel-title-row"><h2>สถานีตรวจวัด</h2><span class="count" id="visible-count">4</span></div>
-          <div class="panel-caption">เลือกสถานีเพื่อดูตำแหน่งบนแผนที่</div>
+          <div class="panel-title-row"><h2>สถานีกรมชลประทาน</h2><span class="count" id="visible-count">0</span></div>
+          <div class="panel-caption">ระดับน้ำและอัตราการไหลจาก SWOC</div>
           <label class="search"><span class="material">search</span><input id="station-search" type="search" placeholder="ค้นหาสถานี..." aria-label="ค้นหาสถานี"></label>
         </div>
         <div class="filters" role="group" aria-label="กรองสถานีตามสถานะ">
@@ -215,38 +218,49 @@
           <button class="filter-btn" type="button" data-filter="normal" aria-pressed="false">ปกติ</button>
         </div>
         <div class="station-list" id="station-list"></div>
-        <div class="empty-state" id="empty-state">ไม่พบสถานีที่ตรงกับการค้นหา</div>
-        <div class="panel-foot"><strong>ข้อมูลจำลองสำหรับต้นแบบ</strong><br>ตำแหน่งและระดับน้ำยังไม่ใช่ข้อมูลตรวจวัดจริง</div>
+        <div class="empty-state" id="empty-state">กำลังรอข้อมูลสถานีจากกรมชลประทาน</div>
+        <div class="panel-foot"><strong>ต้นทาง: กรมชลประทาน SWOC</strong><span id="source-status">กำลังโหลดข้อมูล</span><br>ระบบตรวจข้อมูลทุก 10 นาที · เวลาวัดขึ้นกับรอบส่งข้อมูลของ RID</div>
       </aside>
     </section>
   </main>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script>
-    const stations = [
-      { id: 1, name: "สถานีตัวอย่าง 01", place: "ริมแม่น้ำแม่กลอง · ตัวเมืองบ้านโป่ง", level: 2.14, status: "watch", lat: 13.8178, lng: 99.8764 },
-      { id: 2, name: "สถานีตัวอย่าง 02", place: "พื้นที่ชุมชน · บ้านโป่ง", level: 1.26, status: "normal", lat: 13.8052, lng: 99.8915 },
-      { id: 3, name: "สถานีตัวอย่าง 03", place: "พื้นที่ชุมชน · สวนกล้วย", level: 1.08, status: "normal", lat: 13.8390, lng: 99.8530 },
-      { id: 4, name: "สถานีตัวอย่าง 04", place: "พื้นที่ชุมชน · หนองอ้อ", level: 1.72, status: "alert", lat: 13.7780, lng: 99.8640 }
-    ];
-    const statusText = { normal: "ปกติ · สาธิต", watch: "เฝ้าระวัง · สาธิต", alert: "เตือนภัย · สาธิต" };
+    let stations = [];
     const stationList = document.querySelector("#station-list");
     const searchInput = document.querySelector("#station-search");
     const emptyState = document.querySelector("#empty-state");
     const visibleCount = document.querySelector("#visible-count");
+    const sourceStatus = document.querySelector("#source-status");
     let activeFilter = "all";
     let map;
     let districtBounds;
     const markers = new Map();
 
-    document.querySelector("#updated-time").textContent = new Intl.DateTimeFormat("th-TH", {
-      dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Bangkok"
-    }).format(new Date());
+    function formatTime(value) {
+      if (!value) return "ไม่พบเวลา";
+      return new Intl.DateTimeFormat("th-TH", {
+        dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Bangkok"
+      }).format(new Date(value));
+    }
+
+    function escapeHTML(value) {
+      return String(value ?? "").replace(/[&<>"']/g, (character) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"
+      })[character]);
+    }
+
+    function updateSummary() {
+      document.querySelector("#summary-total").textContent = stations.length;
+      document.querySelector("#summary-watch").textContent = stations.filter((station) => station.status === "watch").length;
+      document.querySelector("#summary-alert").textContent = stations.filter((station) => station.status === "alert").length;
+      document.querySelector("#summary-normal").textContent = stations.filter((station) => station.status === "normal").length;
+    }
 
     function renderStations() {
       const query = searchInput.value.trim().toLocaleLowerCase("th-TH");
       const visible = stations.filter((station) => {
         const matchesStatus = activeFilter === "all" || station.status === activeFilter;
-        const matchesQuery = `${station.name} ${station.place}`.toLocaleLowerCase("th-TH").includes(query);
+        const matchesQuery = `${station.name} ${station.place} ${station.stationCode}`.toLocaleLowerCase("th-TH").includes(query);
         return matchesStatus && matchesQuery;
       });
       stationList.replaceChildren(...visible.map((station) => {
@@ -254,23 +268,75 @@
         button.type = "button";
         button.className = "station";
         button.dataset.stationId = station.id;
-        button.setAttribute("aria-label", `${station.name}, ระดับน้ำตัวอย่าง ${station.level.toFixed(2)} เมตร, ${statusText[station.status]}`);
-        button.innerHTML = `<span class="station-marker ${station.status}"></span><span><span class="station-name">${station.name}</span><span class="station-place">${station.place}</span><span class="status-label ${station.status}">${statusText[station.status]}</span></span><span class="station-reading"><span class="reading-value">${station.level.toFixed(2)}</span><br><span class="reading-unit">เมตร · ตัวอย่าง</span></span>`;
+        button.setAttribute("aria-label", `${station.name} ${station.stationCode}, ระดับน้ำ ${station.waterLevelMeters.toFixed(2)} เมตร, อัตราการไหล ${station.dischargeCubicMetersPerSecond.toFixed(1)} ลูกบาศก์เมตรต่อวินาที, ${station.condition}`);
+        button.innerHTML = `<span class="station-marker ${station.status}"></span><span><span class="station-name">${escapeHTML(station.name)} · ${escapeHTML(station.stationCode)}</span><span class="station-place">${escapeHTML(station.place)}</span><span class="status-label ${station.status}">${escapeHTML(station.condition)}</span></span><span class="station-reading"><span class="reading-value">${station.waterLevelMeters.toFixed(2)}</span><br><span class="reading-unit">เมตร</span><br><span class="reading-unit">Q ${station.dischargeCubicMetersPerSecond.toFixed(1)} m³/s</span></span>`;
         button.addEventListener("click", () => {
           if (map && markers.has(station.id)) {
-            map.setView([station.lat, station.lng], 14, { animate: true });
+            map.setView([station.latitude, station.longitude], 14, { animate: true });
             markers.get(station.id).openPopup();
           }
         });
         return button;
       }));
       visibleCount.textContent = visible.length;
+      emptyState.textContent = stations.length ? "ไม่พบสถานีที่ตรงกับการค้นหา" : "ยังไม่มีข้อมูลสถานีจากกรมชลประทาน";
       emptyState.style.display = visible.length ? "none" : "block";
-      for (const [id, marker] of markers) {
-        const station = stations.find((item) => item.id === id);
-        const isVisible = visible.includes(station);
-        if (isVisible && !map.hasLayer(marker)) marker.addTo(map);
-        if (!isVisible && map.hasLayer(marker)) map.removeLayer(marker);
+      updateSummary();
+      if (map && window.L) {
+        const visibleIds = new Set(visible.map((station) => station.id));
+        for (const station of stations) {
+          let marker = markers.get(station.id);
+          const icon = L.divIcon({
+            className: "",
+            html: `<div class="station-pin ${station.status}"></div>`,
+            iconSize: [22, 22],
+            iconAnchor: [11, 11]
+          });
+          const popup = `<div class="popup-title">${escapeHTML(station.name)} · ${escapeHTML(station.stationCode)}</div><div class="popup-detail">ระดับน้ำ ${station.waterLevelMeters.toFixed(2)} ม. · Q ${station.dischargeCubicMetersPerSecond.toFixed(1)} m³/s<br>${escapeHTML(station.condition)}<br>เวลาวัดจาก RID: ${escapeHTML(station.measuredAt.raw)}</div>`;
+          if (!marker) {
+            marker = L.marker([station.latitude, station.longitude], { icon }).bindPopup(popup);
+            markers.set(station.id, marker);
+          } else {
+            marker.setLatLng([station.latitude, station.longitude]).setIcon(icon).setPopupContent(popup);
+          }
+          if (visibleIds.has(station.id) && !map.hasLayer(marker)) marker.addTo(map);
+          if (!visibleIds.has(station.id) && map.hasLayer(marker)) map.removeLayer(marker);
+        }
+      }
+    }
+
+    async function refreshStationData() {
+      try {
+        const response = await fetch(`./water-data.json?check=${Date.now()}`, { cache: "no-store" });
+        if (!response.ok) throw new Error(`โหลดข้อมูล RID ไม่สำเร็จ (${response.status})`);
+        const data = await response.json();
+        if (!Array.isArray(data.stations) || !data.checkedAt) throw new Error("รูปแบบข้อมูล RID ไม่ถูกต้อง");
+
+        stations = data.stations.map((station) => {
+          const aboveBank = station.bankLevelMeters != null && station.waterLevelMeters >= station.bankLevelMeters;
+          const timeReliable = station.measuredAt?.quality === "current";
+          return {
+            ...station,
+            id: station.stationCode,
+            place: [station.river, station.district, station.province].filter(Boolean).join(" · "),
+            status: !timeReliable ? "watch" : aboveBank ? "alert" : station.ridStatusCode === 1 ? "normal" : "watch",
+            condition: !timeReliable
+              ? `${station.ridTrend || "RID ยังไม่ระบุสถานะ"} · เวลา RID ไม่ยืนยัน`
+              : aboveBank
+                ? `สูงกว่าตลิ่ง ${(station.waterLevelMeters - station.bankLevelMeters).toFixed(2)} ม. · RID`
+                : station.ridTrend || "RID ยังไม่ระบุสถานะ"
+          };
+        });
+
+        document.querySelector("#updated-time").textContent = formatTime(data.checkedAt);
+        const timeProblems = stations.filter((station) => station.measuredAt.quality !== "current");
+        sourceStatus.dataset.quality = timeProblems.length ? "problem" : "current";
+        sourceStatus.textContent = `ดึงข้อมูล: ${formatTime(data.checkedAt)}\nเวลาวัด RID: ${timeProblems.length ? "ไม่สอดคล้อง/เก่า โปรดตรวจสอบ" : "อยู่ในช่วงปกติ"}\n${timeProblems.map((station) => `${station.stationCode}: ${station.measuredAt.raw ?? "ไม่พบเวลา"}`).join("\n")}`;
+        renderStations();
+      } catch (error) {
+        sourceStatus.dataset.quality = "problem";
+        sourceStatus.textContent = `${error.message}\nหากมีข้อมูลรอบก่อน จะแสดงค่ารอบก่อนพร้อมเวลาที่ดึงไว้`;
+        if (!stations.length) renderStations();
       }
     }
 
@@ -308,17 +374,6 @@
       }, {
         "ชื่อสถานที่และแนวถนน (Esri)": placeLabelsLayer
       }, { collapsed: true, position: "topright" }).addTo(map);
-      for (const station of stations) {
-        const icon = L.divIcon({
-          className: "",
-          html: `<div class="station-pin ${station.status}"></div>`,
-          iconSize: [22, 22],
-          iconAnchor: [11, 11]
-        });
-        const marker = L.marker([station.lat, station.lng], { icon });
-        marker.bindPopup(`<div class="popup-title">${station.name}</div><div class="popup-detail">ระดับน้ำ ${station.level.toFixed(2)} เมตร · ข้อมูลสาธิต</div>`);
-        markers.set(station.id, marker);
-      }
       fetch("./ban-pong-boundary.geojson")
         .catch(() => fetch("https://raw.githubusercontent.com/Nongmickey/banpong-water-warning/main/ban-pong-boundary.geojson"))
         .then((response) => {
@@ -341,14 +396,15 @@
           document.querySelector("#map-error").textContent = "โหลดแนวเขตอำเภอไม่ได้ · ยังใช้แผนที่และสถานีได้ตามปกติ";
           document.querySelector("#map-error").classList.add("visible");
         });
-      renderStations();
+      refreshStationData();
+      window.setInterval(refreshStationData, 10 * 60 * 1000);
       window.addEventListener("resize", () => {
         map.invalidateSize();
         if (districtBounds) map.fitBounds(districtBounds, { padding: [28, 28], maxZoom: 11 });
       });
     } else {
       document.querySelector("#map-error").classList.add("visible");
-      renderStations();
+      refreshStationData();
     }
   </script>
 </body>
