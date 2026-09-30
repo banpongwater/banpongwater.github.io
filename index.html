@@ -69,6 +69,12 @@
     .legend-dot.watch { background: var(--amber); }
     .legend-dot.alert { background: var(--red); }
     .map-note { position: absolute; right: 12px; bottom: 25px; z-index: 500; padding: 6px 9px; border-radius: 4px; background: rgba(255,255,255,.91); color: #64716c; font-size: 10px; }
+    .map-note a { color: #315f58; text-decoration: none; }
+    .map-note a:hover { text-decoration: underline; }
+    .district-outline { fill: #167c72; fill-opacity: .07; color: #167c72; weight: 3; opacity: .9; }
+    .leaflet-control-layers { border: 1px solid rgba(32,43,43,.12) !important; border-radius: 5px !important; box-shadow: 0 2px 12px rgba(32,43,43,.12) !important; font-family: "IBM Plex Sans Thai", sans-serif; font-size: 12px; }
+    .leaflet-control-layers-expanded { padding: 9px 11px; }
+    .leaflet-control-layers label { margin: 4px 0; }
     .map-error { position: absolute; inset: 0; z-index: 2; display: none; align-items: center; justify-content: center; padding: 24px; color: #58645f; text-align: center; font-size: 14px; }
     .map-error.visible { display: flex; }
     .side-panel { min-width: 0; display: flex; flex-direction: column; border-left: 1px solid var(--line); }
@@ -194,7 +200,7 @@
           <span class="legend-entry"><span class="legend-dot watch"></span>เฝ้าระวัง</span>
           <span class="legend-entry"><span class="legend-dot alert"></span>เตือนภัย</span>
         </div>
-        <div class="map-note">แผนที่ © OpenStreetMap</div>
+        <div class="map-note">ภาพดาวเทียม © Esri · ขอบเขต <a href="https://www.geoboundaries.org/" target="_blank" rel="noreferrer">geoBoundaries</a> (2019)</div>
       </div>
       <aside class="side-panel">
         <div class="panel-head">
@@ -278,10 +284,29 @@
 
     if (window.L) {
       map = L.map("map", { zoomControl: true, scrollWheelZoom: true }).setView([13.8145, 99.8725], 12);
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      const satelliteLayer = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
+        maxZoom: 19,
+        attribution: "Tiles &copy; Esri, Maxar, Earthstar Geographics, and the GIS User Community"
+      }).addTo(map);
+      const placeLabelsLayer = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}", {
+        maxZoom: 19,
+        attribution: "Labels &copy; Esri"
+      }).addTo(map);
+      const streetLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 19,
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-      }).addTo(map);
+      });
+      const terrainLayer = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
+        maxZoom: 17,
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, SRTM | Map style &copy; <a href="https://opentopomap.org">OpenTopoMap</a>'
+      });
+      const layerControl = L.control.layers({
+        "ภาพดาวเทียม (Esri)": satelliteLayer,
+        "แผนที่ถนน (OpenStreetMap)": streetLayer,
+        "ภูมิประเทศ (OpenTopoMap)": terrainLayer
+      }, {
+        "ชื่อสถานที่และแนวถนน (Esri)": placeLabelsLayer
+      }, { collapsed: true, position: "topright" }).addTo(map);
       for (const station of stations) {
         const icon = L.divIcon({
           className: "",
@@ -293,6 +318,27 @@
         marker.bindPopup(`<div class="popup-title">${station.name}</div><div class="popup-detail">ระดับน้ำ ${station.level.toFixed(2)} เมตร · ข้อมูลสาธิต</div>`);
         markers.set(station.id, marker);
       }
+      fetch("./ban-pong-boundary.geojson")
+        .catch(() => fetch("https://raw.githubusercontent.com/Nongmickey/banpong-water-warning/main/ban-pong-boundary.geojson"))
+        .then((response) => {
+          if (!response.ok) throw new Error("District boundary is unavailable");
+          return response.json();
+        })
+        .then((boundaryData) => {
+          const banPongFeature = boundaryData.features.find((feature) => feature.properties.shapeName === "Ban Pong");
+          if (!banPongFeature) throw new Error("Ban Pong boundary is missing");
+          const boundaryLayer = L.geoJSON(banPongFeature, {
+            style: { color: "#167c72", weight: 3, opacity: 0.9, fillColor: "#37a99b", fillOpacity: 0.07 }
+          });
+          boundaryLayer.bindPopup('<div class="popup-title">ขอบเขตอำเภอบ้านโป่ง</div><div class="popup-detail">geoBoundaries ADM2 · ข้อมูลปี 2019<br>ที่มา: Royal Thai Survey Department, OCHA ROAP · CC BY 3.0 IGO</div>');
+          boundaryLayer.addTo(map);
+          layerControl.addOverlay(boundaryLayer, "ขอบเขตอำเภอบ้านโป่ง (geoBoundaries)");
+          map.fitBounds(boundaryLayer.getBounds(), { padding: [24, 24], maxZoom: 12 });
+        })
+        .catch(() => {
+          document.querySelector("#map-error").textContent = "โหลดแนวเขตอำเภอไม่ได้ · ยังใช้แผนที่และสถานีได้ตามปกติ";
+          document.querySelector("#map-error").classList.add("visible");
+        });
       renderStations();
       window.addEventListener("resize", () => map.invalidateSize());
     } else {
