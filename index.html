@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f5f1">
+  <title>แผนที่เฝ้าระวังระดับน้ำ | บ้านโป่ง</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #202b2b;
+      --muted: #6c7774;
+      --paper: #f4f5f1;
+      --surface: #fff;
+      --line: #e4e8e2;
+      --teal: #167c72;
+      --teal-soft: #e7f3ef;
+      --amber: #c88119;
+      --amber-soft: #fff3dc;
+      --red: #c54b45;
+      --red-soft: #fbe9e6;
+      --green: #3f8b65;
+      --green-soft: #e8f3eb;
+      --shadow: 0 12px 34px rgba(32, 43, 43, .07);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: "IBM Plex Sans Thai", sans-serif; }
+    button, input { font: inherit; }
+    button { color: inherit; }
+    .topline { height: 34px; padding: 0 max(22px, calc((100vw - 1480px) / 2)); display: flex; align-items: center; justify-content: space-between; color: #dbe6e1; background: #263938; font-size: 12px; }
+    .topline-label { display: flex; gap: 9px; align-items: center; }
+    .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #e6bd56; box-shadow: 0 0 0 3px rgba(230,189,86,.15); }
+    .header { max-width: 1480px; min-height: 86px; margin: auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+    .brand { display: flex; align-items: center; gap: 13px; min-width: 0; }
+    .brand-mark { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 13px; color: white; background: var(--teal); }
+    .brand-mark .material { font-size: 25px; }
+    .eyebrow { color: var(--teal); font-size: 11px; font-weight: 700; letter-spacing: .04em; }
+    h1 { margin: 1px 0 0; font-size: 20px; line-height: 1.35; font-weight: 700; }
+    .header-meta { display: flex; align-items: center; gap: 10px; }
+    .prototype-pill { display: inline-flex; align-items: center; gap: 7px; padding: 7px 11px; border: 1px solid #ead9ae; border-radius: 5px; color: #7b5a16; background: #fff8e8; font-size: 12px; font-weight: 600; white-space: nowrap; }
+    .prototype-pill .material { font-size: 17px; }
+    .updated { color: var(--muted); font-size: 12px; text-align: right; line-height: 1.6; }
+    .updated strong { color: var(--ink); font-weight: 600; }
+    main { max-width: 1480px; margin: auto; padding: 0 24px 28px; }
+    .summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom: 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); box-shadow: var(--shadow); }
+    .summary-item { min-height: 73px; padding: 14px 20px; display: flex; align-items: center; gap: 13px; }
+    .summary-item + .summary-item { border-left: 1px solid var(--line); }
+    .summary-icon { width: 38px; height: 38px; flex: none; display: grid; place-items: center; border-radius: 10px; color: var(--teal); background: var(--teal-soft); }
+    .summary-item.warning .summary-icon { color: var(--amber); background: var(--amber-soft); }
+    .summary-item.alert .summary-icon { color: var(--red); background: var(--red-soft); }
+    .summary-item.normal .summary-icon { color: var(--green); background: var(--green-soft); }
+    .summary-icon .material { font-size: 21px; }
+    .summary-label { color: var(--muted); font-size: 12px; }
+    .summary-value { margin-top: 1px; font-size: 19px; font-weight: 700; line-height: 1.15; }
+    .summary-value small { margin-left: 3px; color: var(--muted); font-size: 11px; font-weight: 500; }
+    .workspace { min-height: min(690px, calc(100vh - 245px)); display: grid; grid-template-columns: minmax(0, 1fr) 360px; overflow: hidden; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); box-shadow: var(--shadow); }
+    .map-wrap { min-height: 600px; position: relative; background-color: #e8eeea; background-image: linear-gradient(30deg, transparent 48%, rgba(57, 105, 88, .055) 49%, rgba(57, 105, 88, .055) 50%, transparent 51%), linear-gradient(120deg, transparent 48%, rgba(57, 105, 88, .045) 49%, rgba(57, 105, 88, .045) 50%, transparent 51%); background-size: 42px 42px; }
+    #map { position: absolute; inset: 0; z-index: 1; }
+    .map-chip { position: absolute; top: 16px; left: 16px; z-index: 500; display: flex; align-items: center; gap: 7px; max-width: calc(100% - 32px); padding: 8px 12px; border: 1px solid rgba(32,43,43,.1); border-radius: 5px; background: rgba(255,255,255,.95); box-shadow: 0 2px 12px rgba(32,43,43,.1); font-size: 12px; font-weight: 600; }
+    .map-chip .material { color: var(--teal); font-size: 18px; }
+    .map-legend { position: absolute; bottom: 25px; left: 14px; z-index: 500; display: flex; flex-wrap: wrap; gap: 12px; padding: 9px 12px; border: 1px solid rgba(32,43,43,.1); border-radius: 5px; background: rgba(255,255,255,.95); box-shadow: 0 2px 12px rgba(32,43,43,.1); font-size: 11px; }
+    .legend-entry { display: inline-flex; align-items: center; gap: 6px; }
+    .legend-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+    .legend-dot.watch { background: var(--amber); }
+    .legend-dot.alert { background: var(--red); }
+    .map-note { position: absolute; right: 12px; bottom: 25px; z-index: 500; padding: 6px 9px; border-radius: 4px; background: rgba(255,255,255,.91); color: #64716c; font-size: 10px; }
+    .map-error { position: absolute; inset: 0; z-index: 2; display: none; align-items: center; justify-content: center; padding: 24px; color: #58645f; text-align: center; font-size: 14px; }
+    .map-error.visible { display: flex; }
+    .side-panel { min-width: 0; display: flex; flex-direction: column; border-left: 1px solid var(--line); }
+    .panel-head { padding: 18px 18px 14px; border-bottom: 1px solid var(--line); }
+    .panel-title-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    h2 { margin: 0; font-size: 16px; font-weight: 700; }
+    .count { min-width: 25px; padding: 2px 7px; border-radius: 10px; color: var(--teal); background: var(--teal-soft); font-size: 11px; font-weight: 700; text-align: center; }
+    .panel-caption { margin-top: 2px; color: var(--muted); font-size: 11px; }
+    .search { position: relative; margin-top: 13px; }
+    .search .material { position: absolute; top: 50%; left: 10px; transform: translateY(-50%); color: #84908c; font-size: 19px; pointer-events: none; }
+    .search input { width: 100%; height: 37px; padding: 0 10px 0 36px; border: 1px solid #dce2dc; border-radius: 5px; outline: none; background: #fbfcfa; font-size: 12px; }
+    .search input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(22,124,114,.1); }
+    .filters { padding: 11px 14px; display: flex; gap: 5px; border-bottom: 1px solid var(--line); }
+    .filter-btn { min-height: 30px; padding: 4px 9px; border: 1px solid transparent; border-radius: 4px; color: #697570; background: transparent; font-size: 11px; cursor: pointer; }
+    .filter-btn:hover { background: #f4f6f3; }
+    .filter-btn[aria-pressed="true"] { border-color: #cce2dc; color: #12675f; background: #edf6f2; font-weight: 600; }
+    .station-list { flex: 1; overflow: auto; }
+    .station { width: 100%; padding: 13px 16px; display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; gap: 10px; align-items: start; border: 0; border-bottom: 1px solid #edf0ec; background: white; text-align: left; cursor: pointer; transition: background .15s ease; }
+    .station:hover, .station:focus-visible { outline: none; background: #f6f9f6; }
+    .station-marker { width: 9px; height: 9px; margin-top: 5px; border: 2px solid white; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 1px var(--green); }
+    .station-marker.watch { background: var(--amber); box-shadow: 0 0 0 1px var(--amber); }
+    .station-marker.alert { background: var(--red); box-shadow: 0 0 0 1px var(--red); }
+    .station-name { font-size: 12px; font-weight: 600; line-height: 1.4; }
+    .station-place { margin-top: 2px; color: var(--muted); font-size: 10px; }
+    .station-reading { text-align: right; white-space: nowrap; }
+    .reading-value { font-size: 14px; font-weight: 700; line-height: 1.2; }
+    .reading-unit { color: var(--muted); font-size: 9px; }
+    .status-label { display: inline-block; margin-top: 4px; padding: 2px 6px; border-radius: 3px; color: #33734f; background: var(--green-soft); font-size: 9px; }
+    .status-label.watch { color: #885d12; background: var(--amber-soft); }
+    .status-label.alert { color: #9e3935; background: var(--red-soft); }
+    .empty-state { display: none; padding: 30px 18px; color: var(--muted); font-size: 12px; text-align: center; }
+    .panel-foot { padding: 11px 16px; border-top: 1px solid var(--line); color: #76817d; background: #fbfcfa; font-size: 10px; line-height: 1.6; }
+    .panel-foot strong { color: #655222; font-weight: 600; }
+    .material { font-family: "Material Symbols Outlined"; font-weight: normal; font-style: normal; font-size: 20px; line-height: 1; display: inline-block; white-space: nowrap; direction: ltr; -webkit-font-feature-settings: "liga"; -webkit-font-smoothing: antialiased; font-feature-settings: "liga"; }
+    .station-pin { width: 22px; height: 22px; border: 3px solid #fff; border-radius: 50%; background: var(--green); box-shadow: 0 2px 7px rgba(18,38,34,.35), 0 0 0 1px rgba(25,52,44,.16); }
+    .station-pin.watch { background: var(--amber); }
+    .station-pin.alert { background: var(--red); }
+    .leaflet-popup-content-wrapper { border-radius: 5px; }
+    .popup-title { margin-bottom: 3px; font-family: "IBM Plex Sans Thai", sans-serif; font-size: 13px; font-weight: 600; }
+    .popup-detail { color: #66716c; font-family: "IBM Plex Sans Thai", sans-serif; font-size: 11px; }
+    .leaflet-control-zoom a { color: #263938 !important; }
+    @media (max-width: 900px) {
+      .workspace { grid-template-columns: minmax(0, 1fr) 320px; }
+      .map-wrap { min-height: 550px; }
+    }
+    @media (max-width: 700px) {
+      .topline { padding: 0 14px; }
+      .header { min-height: 76px; padding: 12px 15px; }
+      .brand-mark { width: 40px; height: 40px; }
+      h1 { font-size: 17px; }
+      .eyebrow { font-size: 10px; }
+      .updated { display: none; }
+      .prototype-pill { padding: 6px 8px; font-size: 10px; }
+      main { padding: 0 12px 16px; }
+      .summary { margin-bottom: 10px; }
+      .summary-item { min-height: 78px; padding: 8px 4px; gap: 3px; flex-direction: column; justify-content: center; text-align: center; }
+      .summary-icon { width: 27px; height: 27px; border-radius: 8px; }
+      .summary-icon .material { font-size: 17px; }
+      .summary-label { min-height: 20px; display: flex; align-items: center; justify-content: center; font-size: 8px; line-height: 1.2; }
+      .summary-value { font-size: 16px; }
+      .summary-value small { font-size: 9px; }
+      .workspace { display: flex; flex-direction: column; overflow: visible; }
+      .map-wrap { min-height: 0; height: 52vh; max-height: 490px; }
+      .side-panel { border-top: 1px solid var(--line); border-left: 0; }
+      .station-list { max-height: 360px; }
+      .map-legend { bottom: 25px; gap: 8px; padding: 8px 9px; }
+      .map-note { display: none; }
+    }
+    @media (max-width: 390px) {
+      .prototype-pill { max-width: 108px; white-space: normal; line-height: 1.2; }
+      .summary-item { gap: 5px; }
+      .summary-icon { width: 26px; height: 26px; }
+      .summary-label { font-size: 8px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..24,400,0,0" rel="stylesheet">
+</head>
+<body>
+  <div class="topline">
+    <div class="topline-label"><span class="live-dot"></span><span>ศูนย์ติดตามสถานการณ์น้ำชุมชน</span></div>
+    <span>อำเภอบ้านโป่ง · จังหวัดราชบุรี</span>
+  </div>
+  <header class="header">
+    <div class="brand">
+      <div class="brand-mark"><span class="material">water</span></div>
+      <div>
+        <div class="eyebrow">ระบบเฝ้าระวังระดับน้ำ</div>
+        <h1>แผนที่สถานการณ์น้ำ บ้านโป่ง</h1>
+      </div>
+    </div>
+    <div class="header-meta">
+      <div class="updated">อัปเดตล่าสุด<br><strong id="updated-time">กำลังโหลด...</strong></div>
+      <div class="prototype-pill"><span class="material">science</span>ข้อมูลสาธิต</div>
+    </div>
+  </header>
+  <main>
+    <section class="summary" aria-label="สรุปสถานีตัวอย่าง">
+      <div class="summary-item">
+        <div class="summary-icon"><span class="material">sensors</span></div>
+        <div><div class="summary-label">สถานีตัวอย่าง</div><div class="summary-value">4 <small>จุด</small></div></div>
+      </div>
+      <div class="summary-item warning">
+        <div class="summary-icon"><span class="material">warning</span></div>
+        <div><div class="summary-label">เฝ้าระวัง (สาธิต)</div><div class="summary-value">1 <small>จุด</small></div></div>
+      </div>
+      <div class="summary-item alert">
+        <div class="summary-icon"><span class="material">error</span></div>
+        <div><div class="summary-label">เตือนภัย (สาธิต)</div><div class="summary-value">1 <small>จุด</small></div></div>
+      </div>
+      <div class="summary-item normal">
+        <div class="summary-icon"><span class="material">check_circle</span></div>
+        <div><div class="summary-label">ปกติ (สาธิต)</div><div class="summary-value">2 <small>จุด</small></div></div>
+      </div>
+    </section>
+    <section class="workspace" aria-label="แผนที่และสถานีเฝ้าระวัง">
+      <div class="map-wrap">
+        <div id="map" role="application" aria-label="แผนที่อำเภอบ้านโป่ง"></div>
+        <div class="map-error" id="map-error">ไม่สามารถโหลดแผนที่ได้ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต<br>รายการสถานีตัวอย่างยังดูได้จากแผงด้านข้าง</div>
+        <div class="map-chip"><span class="material">near_me</span>อำเภอบ้านโป่ง · ราชบุรี</div>
+        <div class="map-legend" aria-label="คำอธิบายสัญลักษณ์">
+          <span class="legend-entry"><span class="legend-dot"></span>ปกติ</span>
+          <span class="legend-entry"><span class="legend-dot watch"></span>เฝ้าระวัง</span>
+          <span class="legend-entry"><span class="legend-dot alert"></span>เตือนภัย</span>
+        </div>
+        <div class="map-note">แผนที่ © OpenStreetMap</div>
+      </div>
+      <aside class="side-panel">
+        <div class="panel-head">
+          <div class="panel-title-row"><h2>สถานีตรวจวัด</h2><span class="count" id="visible-count">4</span></div>
+          <div class="panel-caption">เลือกสถานีเพื่อดูตำแหน่งบนแผนที่</div>
+          <label class="search"><span class="material">search</span><input id="station-search" type="search" placeholder="ค้นหาสถานี..." aria-label="ค้นหาสถานี"></label>
+        </div>
+        <div class="filters" role="group" aria-label="กรองสถานีตามสถานะ">
+          <button class="filter-btn" type="button" data-filter="all" aria-pressed="true">ทั้งหมด</button>
+          <button class="filter-btn" type="button" data-filter="alert" aria-pressed="false">เตือนภัย</button>
+          <button class="filter-btn" type="button" data-filter="watch" aria-pressed="false">เฝ้าระวัง</button>
+          <button class="filter-btn" type="button" data-filter="normal" aria-pressed="false">ปกติ</button>
+        </div>
+        <div class="station-list" id="station-list"></div>
+        <div class="empty-state" id="empty-state">ไม่พบสถานีที่ตรงกับการค้นหา</div>
+        <div class="panel-foot"><strong>ข้อมูลจำลองสำหรับต้นแบบ</strong><br>ตำแหน่งและระดับน้ำยังไม่ใช่ข้อมูลตรวจวัดจริง</div>
+      </aside>
+    </section>
+  </main>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script>
+    const stations = [
+      { id: 1, name: "สถานีตัวอย่าง 01", place: "ริมแม่น้ำแม่กลอง · ตัวเมืองบ้านโป่ง", level: 2.14, status: "watch", lat: 13.8178, lng: 99.8764 },
+      { id: 2, name: "สถานีตัวอย่าง 02", place: "พื้นที่ชุมชน · บ้านโป่ง", level: 1.26, status: "normal", lat: 13.8052, lng: 99.8915 },
+      { id: 3, name: "สถานีตัวอย่าง 03", place: "พื้นที่ชุมชน · สวนกล้วย", level: 1.08, status: "normal", lat: 13.8390, lng: 99.8530 },
+      { id: 4, name: "สถานีตัวอย่าง 04", place: "พื้นที่ชุมชน · หนองอ้อ", level: 1.72, status: "alert", lat: 13.7780, lng: 99.8640 }
+    ];
+    const statusText = { normal: "ปกติ · สาธิต", watch: "เฝ้าระวัง · สาธิต", alert: "เตือนภัย · สาธิต" };
+    const stationList = document.querySelector("#station-list");
+    const searchInput = document.querySelector("#station-search");
+    const emptyState = document.querySelector("#empty-state");
+    const visibleCount = document.querySelector("#visible-count");
+    let activeFilter = "all";
+    let map;
+    const markers = new Map();
+
+    document.querySelector("#updated-time").textContent = new Intl.DateTimeFormat("th-TH", {
+      dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Bangkok"
+    }).format(new Date());
+
+    function renderStations() {
+      const query = searchInput.value.trim().toLocaleLowerCase("th-TH");
+      const visible = stations.filter((station) => {
+        const matchesStatus = activeFilter === "all" || station.status === activeFilter;
+        const matchesQuery = `${station.name} ${station.place}`.toLocaleLowerCase("th-TH").includes(query);
+        return matchesStatus && matchesQuery;
+      });
+      stationList.replaceChildren(...visible.map((station) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "station";
+        button.dataset.stationId = station.id;
+        button.setAttribute("aria-label", `${station.name}, ระดับน้ำตัวอย่าง ${station.level.toFixed(2)} เมตร, ${statusText[station.status]}`);
+        button.innerHTML = `<span class="station-marker ${station.status}"></span><span><span class="station-name">${station.name}</span><span class="station-place">${station.place}</span><span class="status-label ${station.status}">${statusText[station.status]}</span></span><span class="station-reading"><span class="reading-value">${station.level.toFixed(2)}</span><br><span class="reading-unit">เมตร · ตัวอย่าง</span></span>`;
+        button.addEventListener("click", () => {
+          if (map && markers.has(station.id)) {
+            map.setView([station.lat, station.lng], 14, { animate: true });
+            markers.get(station.id).openPopup();
+          }
+        });
+        return button;
+      }));
+      visibleCount.textContent = visible.length;
+      emptyState.style.display = visible.length ? "none" : "block";
+      for (const [id, marker] of markers) {
+        const station = stations.find((item) => item.id === id);
+        const isVisible = visible.includes(station);
+        if (isVisible && !map.hasLayer(marker)) marker.addTo(map);
+        if (!isVisible && map.hasLayer(marker)) map.removeLayer(marker);
+      }
+    }
+
+    document.querySelectorAll(".filter-btn").forEach((button) => {
+      button.addEventListener("click", () => {
+        activeFilter = button.dataset.filter;
+        document.querySelectorAll(".filter-btn").forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
+        renderStations();
+      });
+    });
+    searchInput.addEventListener("input", renderStations);
+
+    if (window.L) {
+      map = L.map("map", { zoomControl: true, scrollWheelZoom: true }).setView([13.8145, 99.8725], 12);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+      }).addTo(map);
+      for (const station of stations) {
+        const icon = L.divIcon({
+          className: "",
+          html: `<div class="station-pin ${station.status}"></div>`,
+          iconSize: [22, 22],
+          iconAnchor: [11, 11]
+        });
+        const marker = L.marker([station.lat, station.lng], { icon });
+        marker.bindPopup(`<div class="popup-title">${station.name}</div><div class="popup-detail">ระดับน้ำ ${station.level.toFixed(2)} เมตร · ข้อมูลสาธิต</div>`);
+        markers.set(station.id, marker);
+      }
+      renderStations();
+      window.addEventListener("resize", () => map.invalidateSize());
+    } else {
+      document.querySelector("#map-error").classList.add("visible");
+      renderStations();
+    }
+  </script>
+</body>
+</html>
