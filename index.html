@@ -235,6 +235,7 @@
     const visibleCount = document.querySelector("#visible-count");
     let activeFilter = "all";
     let map;
+    let districtBounds;
     const markers = new Map();
 
     document.querySelector("#updated-time").textContent = new Intl.DateTimeFormat("th-TH", {
@@ -330,17 +331,21 @@
           const boundaryLayer = L.geoJSON(banPongFeature, {
             style: { color: "#ffe34d", weight: 4, opacity: 1, fillColor: "#30c5b5", fillOpacity: 0.12 }
           });
+          districtBounds = boundaryLayer.getBounds();
           boundaryLayer.bindPopup('<div class="popup-title">ขอบเขตอำเภอบ้านโป่ง</div><div class="popup-detail">geoBoundaries ADM2 · ข้อมูลปี 2019<br>ที่มา: Royal Thai Survey Department, OCHA ROAP · CC BY 3.0 IGO</div>');
           boundaryLayer.addTo(map);
           layerControl.addOverlay(boundaryLayer, "ขอบเขตอำเภอบ้านโป่ง (geoBoundaries)");
-          map.fitBounds(boundaryLayer.getBounds(), { padding: [28, 28], maxZoom: 11 });
+          map.fitBounds(districtBounds, { padding: [28, 28], maxZoom: 11 });
         })
         .catch(() => {
           document.querySelector("#map-error").textContent = "โหลดแนวเขตอำเภอไม่ได้ · ยังใช้แผนที่และสถานีได้ตามปกติ";
           document.querySelector("#map-error").classList.add("visible");
         });
       renderStations();
-      window.addEventListener("resize", () => map.invalidateSize());
+      window.addEventListener("resize", () => {
+        map.invalidateSize();
+        if (districtBounds) map.fitBounds(districtBounds, { padding: [28, 28], maxZoom: 11 });
+      });
     } else {
       document.querySelector("#map-error").classList.add("visible");
       renderStations();
