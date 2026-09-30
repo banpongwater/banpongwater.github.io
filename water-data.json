@@ -1,181 +1,13 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-09-30T19:42:57.509Z",
+  "checkedAt": "2026-09-30T20:14:19.976Z",
   "source": {
     "name": "Royal Irrigation Department SWOC key-station telemetry",
     "url": "https://swoc.rid.go.th/webservice/keystation/getKeyStationGeoJson.ashx",
-    "responseDate": "Wed, 30 Sep 2026 19:42:57 GMT",
+    "responseDate": "Wed, 30 Sep 2026 20:14:19 GMT",
     "schedule": "Every 10 minutes (GitHub Actions scheduled workflow; best effort)"
   },
   "stations": [
-    {
-      "stationId": 125,
-      "stationCode": "K.10",
-      "role": "สถานีเครือข่ายลุ่มน้ำแม่กลอง",
-      "name": "บ้านลุ่มสุ่ม",
-      "province": "กาญจนบุรี",
-      "district": "ไทรโยค",
-      "basin": "ลุ่มน้ำแม่กลอง",
-      "river": "แม่น้ำแควน้อย",
-      "latitude": 14.092002868652344,
-      "longitude": 99.17857360839844,
-      "waterLevelMeters": 13.359999656677246,
-      "bankLevelMeters": 10.300000190734863,
-      "dischargeCubicMetersPerSecond": null,
-      "dischargeCapacityPercent": 0,
-      "ridStatusCode": 3,
-      "ridTrend": "สูงกว่าตลิ่ง 3.06 ม.",
-      "measuredAt": {
-        "raw": "1 ตุลาคม 2569 เวลา 23:00 น.",
-        "iso": "2026-10-01T16:00:00.000Z",
-        "quality": "future",
-        "ageMinutes": -1217
-      }
-    },
-    {
-      "stationId": 126,
-      "stationCode": "K.11A",
-      "role": "สถานีเครือข่ายลุ่มน้ำแม่กลอง",
-      "name": "บ้านวังขนาย",
-      "province": "กาญจนบุรี",
-      "district": "ท่าม่วง",
-      "basin": "ลุ่มน้ำแม่กลอง",
-      "river": "แม่น้ำแม่กลอง",
-      "latitude": 13.950238227844238,
-      "longitude": 99.64515686035156,
-      "waterLevelMeters": 2.3299999237060547,
-      "bankLevelMeters": 6.199999809265137,
-      "dischargeCubicMetersPerSecond": 237.63999938964844,
-      "dischargeCapacityPercent": 18.27999995304988,
-      "ridStatusCode": 1,
-      "ridTrend": "ต่ำกว่าตลิ่ง 3.87 ม.",
-      "measuredAt": {
-        "raw": "1 ตุลาคม 2569 เวลา 23:00 น.",
-        "iso": "2026-10-01T16:00:00.000Z",
-        "quality": "future",
-        "ageMinutes": -1217
-      }
-    },
-    {
-      "stationId": 127,
-      "stationCode": "K.12",
-      "role": "สถานีเครือข่ายลุ่มน้ำแม่กลอง",
-      "name": "บ้านทุ่งนานางหรอก",
-      "province": "กาญจนบุรี",
-      "district": "เมืองกาญจนบุรี",
-      "basin": "ลุ่มน้ำแม่กลอง",
-      "river": "ลำตะเพิน",
-      "latitude": 14.175436019897461,
-      "longitude": 99.43414306640625,
-      "waterLevelMeters": 6.480000019073486,
-      "bankLevelMeters": 6.099999904632568,
-      "dischargeCubicMetersPerSecond": null,
-      "dischargeCapacityPercent": 0,
-      "ridStatusCode": 3,
-      "ridTrend": "สูงกว่าตลิ่ง 0.38 ม.",
-      "measuredAt": {
-        "raw": "1 ตุลาคม 2569 เวลา 23:00 น.",
-        "iso": "2026-10-01T16:00:00.000Z",
-        "quality": "future",
-        "ageMinutes": -1217
-      }
-    },
-    {
-      "stationId": 129,
-      "stationCode": "K.31",
-      "role": "สถานีเครือข่ายลุ่มน้ำแม่กลอง",
-      "name": "บ้านน้ำโจน",
-      "province": "กาญจนบุรี",
-      "district": "ไทรโยค",
-      "basin": "ลุ่มน้ำแม่กลอง",
-      "river": "ห้วยแม่น้ำน้อย",
-      "latitude": 14.43411636352539,
-      "longitude": 98.80916595458984,
-      "waterLevelMeters": 6.349999904632568,
-      "bankLevelMeters": 14.800000190734863,
-      "dischargeCubicMetersPerSecond": 190.5,
-      "dischargeCapacityPercent": 8.619909502262443,
-      "ridStatusCode": 1,
-      "ridTrend": "ต่ำกว่าตลิ่ง 8.45 ม.",
-      "measuredAt": {
-        "raw": "1 ตุลาคม 2569 เวลา 23:00 น.",
-        "iso": "2026-10-01T16:00:00.000Z",
-        "quality": "future",
-        "ageMinutes": -1217
-      }
-    },
-    {
-      "stationId": 130,
-      "stationCode": "K.35A",
-      "role": "สถานีเครือข่ายลุ่มน้ำแม่กลอง",
-      "name": "บ้านหนองบัว",
-      "province": "กาญจนบุรี",
-      "district": "เมืองกาญจนบุรี",
-      "basin": "ลุ่มน้ำแม่กลอง",
-      "river": "แม่น้ำแควใหญ่",
-      "latitude": 14.058624267578125,
-      "longitude": 99.44522857666016,
-      "waterLevelMeters": 5.480000019073486,
-      "bankLevelMeters": 5.5,
-      "dischargeCubicMetersPerSecond": 434.6000061035156,
-      "dischargeCapacityPercent": 98.77272865988992,
-      "ridStatusCode": 2,
-      "ridTrend": "ต่ำกว่าตลิ่ง 0.02 ม.",
-      "measuredAt": {
-        "raw": "1 ตุลาคม 2569 เวลา 23:00 น.",
-        "iso": "2026-10-01T16:00:00.000Z",
-        "quality": "future",
-        "ageMinutes": -1217
-      }
-    },
-    {
-      "stationId": 132,
-      "stationCode": "K.49",
-      "role": "สถานีเครือข่ายลุ่มน้ำแม่กลอง",
-      "name": "บ้านยางสูง",
-      "province": "กาญจนบุรี",
-      "district": "บ่อพลอย",
-      "basin": "ลุ่มน้ำแม่กลอง",
-      "river": "ลำตะเพิน",
-      "latitude": 14.489350318908691,
-      "longitude": 99.46975708007812,
-      "waterLevelMeters": 5.369999885559082,
-      "bankLevelMeters": 4.5,
-      "dischargeCubicMetersPerSecond": null,
-      "dischargeCapacityPercent": 0,
-      "ridStatusCode": 3,
-      "ridTrend": "สูงกว่าตลิ่ง 0.87 ม.",
-      "measuredAt": {
-        "raw": "1 ตุลาคม 2569 เวลา 23:00 น.",
-        "iso": "2026-10-01T16:00:00.000Z",
-        "quality": "future",
-        "ageMinutes": -1217
-      }
-    },
-    {
-      "stationId": 133,
-      "stationCode": "K.54",
-      "role": "สถานีเครือข่ายลุ่มน้ำแม่กลอง",
-      "name": "บ้านลิ่นถิ่น",
-      "province": "กาญจนบุรี",
-      "district": "ทองผาภูมิ",
-      "basin": "ลุ่มน้ำแม่กลอง",
-      "river": "แม่น้ำแควน้อย",
-      "latitude": 14.535959243774414,
-      "longitude": 98.78768920898438,
-      "waterLevelMeters": 6.389999866485596,
-      "bankLevelMeters": 8,
-      "dischargeCubicMetersPerSecond": 789.8599853515625,
-      "dischargeCapacityPercent": 73.13518382884838,
-      "ridStatusCode": 1,
-      "ridTrend": "ต่ำกว่าตลิ่ง 1.61 ม.",
-      "measuredAt": {
-        "raw": "1 ตุลาคม 2569 เวลา 23:00 น.",
-        "iso": "2026-10-01T16:00:00.000Z",
-        "quality": "future",
-        "ageMinutes": -1217
-      }
-    },
     {
       "stationId": 134,
       "stationCode": "K.55A",
@@ -197,67 +29,46 @@
         "raw": "1 ตุลาคม 2569 เวลา 23:00 น.",
         "iso": "2026-10-01T16:00:00.000Z",
         "quality": "future",
-        "ageMinutes": -1217
-      }
-    },
-    {
-      "stationId": 135,
-      "stationCode": "K.58",
-      "role": "สถานีเครือข่ายลุ่มน้ำแม่กลอง",
-      "name": "บ้านท่าเสา",
-      "province": "กาญจนบุรี",
-      "district": "ไทรโยค",
-      "basin": "ลุ่มน้ำแม่กลอง",
-      "river": "แม่น้ำแควน้อย",
-      "latitude": 14.215224266052246,
-      "longitude": 99.05821990966797,
-      "waterLevelMeters": 10.770000457763672,
-      "bankLevelMeters": 6.300000190734863,
-      "dischargeCubicMetersPerSecond": null,
-      "dischargeCapacityPercent": 0,
-      "ridStatusCode": 3,
-      "ridTrend": "สูงกว่าตลิ่ง 4.47 ม.",
-      "measuredAt": {
-        "raw": "1 ตุลาคม 2569 เวลา 23:00 น.",
-        "iso": "2026-10-01T16:00:00.000Z",
-        "quality": "future",
-        "ageMinutes": -1217
-      }
-    },
-    {
-      "stationId": 136,
-      "stationCode": "K.62",
-      "role": "สถานีเครือข่ายลุ่มน้ำแม่กลอง",
-      "name": "บ้านหนองไผ่",
-      "province": "กาญจนบุรี",
-      "district": "ด่านมะขามเตี้ย",
-      "basin": "ลุ่มน้ำแม่กลอง",
-      "river": "ลำภาชี",
-      "latitude": 13.781018257141113,
-      "longitude": 99.4209976196289,
-      "waterLevelMeters": 2.390000104904175,
-      "bankLevelMeters": 5.800000190734863,
-      "dischargeCubicMetersPerSecond": null,
-      "dischargeCapacityPercent": 0,
-      "ridStatusCode": 1,
-      "ridTrend": "ต่ำกว่าตลิ่ง 3.41 ม.",
-      "measuredAt": {
-        "raw": "1 ตุลาคม 2569 เวลา 23:00 น.",
-        "iso": "2026-10-01T16:00:00.000Z",
-        "quality": "future",
-        "ageMinutes": -1217
+        "ageMinutes": -1186
       }
     }
   ],
-  "rainfall": {
-    "station": {
-      "stationId": 709,
-      "name": "บ้านโป่ง",
-      "latitude": 13.818629264831543,
-      "longitude": 99.86508178710938
+  "bridges": [
+    {
+      "id": "khai-luang",
+      "name": "สะพานค่ายหลวง",
+      "latitude": 13.818668365478516,
+      "longitude": 99.86474609375,
+      "road": "สะพานข้ามแม่น้ำแม่กลอง",
+      "river": "แม่น้ำแม่กลอง",
+      "stationCode": "K.55A",
+      "coordinateQuality": "RID gauge location",
+      "source": "กรมชลประทาน SWOC",
+      "sourceUrl": "https://swoc.rid.go.th/webservice/keystation/getKeyStationGeoJson.ashx"
     },
-    "status": "no-recent-readings",
-    "checkedAt": "2026-09-30T19:42:57.509Z",
-    "measurements": []
-  }
+    {
+      "id": "khao-ngu-bek-phrai",
+      "name": "สะพานเขางู–เบิกไพร",
+      "latitude": 13.8297269,
+      "longitude": 99.8656443,
+      "road": "ทางหลวงหมายเลข 3291",
+      "river": "แม่น้ำแม่กลอง",
+      "stationCode": null,
+      "coordinateQuality": "OpenStreetMap bridge feature; approximate center",
+      "source": "เทศบาลเมืองบ้านโป่ง; OpenStreetMap",
+      "sourceUrl": "https://banpong.go.th/public/list/data/detail/id/6323/menu/1559"
+    },
+    {
+      "id": "ban-muang-rb4005",
+      "name": "สะพาน รบ.002 บ้านม่วง",
+      "latitude": 13.75463,
+      "longitude": 99.8406,
+      "road": "ถนนสะพานชนบท รบ.4005",
+      "river": "แม่น้ำแม่กลอง",
+      "stationCode": null,
+      "coordinateQuality": "Published map coordinate",
+      "source": "แขวงทางหลวงชนบทราชบุรี; Yellow Pages bridge listing",
+      "sourceUrl": "https://www.yellowpages.co.th/"
+    }
+  ]
 }

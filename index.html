@@ -111,10 +111,18 @@
     .panel-foot strong { color: #655222; font-weight: 600; }
     .panel-foot #source-status { display: block; white-space: pre-line; }
     .panel-foot #source-status[data-quality="problem"] { color: #8a5a0b; }
-    .rainfall-summary { padding: 11px 16px; border-top: 1px solid var(--line); color: var(--muted); background: #fbfcfa; font-size: 11px; line-height: 1.6; }
-    .rainfall-summary strong { display: block; margin-bottom: 2px; color: var(--ink); font-size: 12px; }
-    .rainfall-pin { width: 23px; height: 23px; display: grid; place-items: center; border: 2px solid #fff; border-radius: 6px; color: white; background: #167c72; box-shadow: 0 2px 7px rgba(18,38,34,.35); }
-    .rainfall-pin .material { font-size: 15px; }
+    .bridge-section { border-top: 1px solid var(--line); }
+    .bridge-section h3 { margin: 0; padding: 11px 16px 7px; font-size: 12px; font-weight: 700; }
+    .bridge-reference { width: 100%; padding: 11px 16px; display: grid; grid-template-columns: 24px minmax(0, 1fr) auto; gap: 9px; align-items: start; border: 0; border-bottom: 1px solid #edf0ec; background: white; text-align: left; cursor: pointer; }
+    .bridge-reference:hover, .bridge-reference:focus-visible { outline: none; background: #f6f9f6; }
+    .bridge-icon { width: 22px; height: 22px; display: grid; place-items: center; border-radius: 5px; color: #176e62; background: #e8f3ef; }
+    .bridge-icon .material { font-size: 16px; }
+    .bridge-name { display: block; font-size: 11px; font-weight: 600; }
+    .bridge-place { display: block; margin-top: 2px; color: var(--muted); font-size: 9px; line-height: 1.45; }
+    .bridge-reading { color: #176e62; font-size: 10px; font-weight: 600; text-align: right; white-space: nowrap; }
+    .bridge-reading.unmonitored { color: #7a7263; font-weight: 500; white-space: normal; }
+    .bridge-pin { width: 23px; height: 23px; display: grid; place-items: center; border: 2px solid #fff; border-radius: 50%; color: #fff; background: #176e62; box-shadow: 0 2px 7px rgba(18,38,34,.4); }
+    .bridge-pin .material { font-size: 14px; }
     .material { font-family: "Material Symbols Outlined"; font-weight: normal; font-style: normal; font-size: 20px; line-height: 1; display: inline-block; white-space: nowrap; direction: ltr; -webkit-font-feature-settings: "liga"; -webkit-font-smoothing: antialiased; font-feature-settings: "liga"; }
     .station-pin { width: 22px; height: 22px; border: 3px solid #fff; border-radius: 50%; background: var(--green); box-shadow: 0 2px 7px rgba(18,38,34,.35), 0 0 0 1px rgba(25,52,44,.16); }
     .station-pin.watch { background: var(--amber); }
@@ -179,41 +187,41 @@
     </div>
   </header>
   <main>
-    <section class="summary" aria-label="สรุปข้อมูลสถานีกรมชลประทาน">
+    <section class="summary" aria-label="สรุปข้อมูลน้ำอำเภอบ้านโป่ง">
       <div class="summary-item">
         <div class="summary-icon"><span class="material">sensors</span></div>
-        <div><div class="summary-label">สถานี RID</div><div class="summary-value"><span id="summary-total">0</span> <small>จุด</small></div></div>
+        <div><div class="summary-label">สถานี RID บ้านโป่ง</div><div class="summary-value"><span id="summary-total">0</span> <small>จุด</small></div></div>
       </div>
       <div class="summary-item warning">
         <div class="summary-icon"><span class="material">warning</span></div>
-        <div><div class="summary-label">ตรวจสอบข้อมูล</div><div class="summary-value"><span id="summary-watch">0</span> <small>จุด</small></div></div>
+        <div><div class="summary-label">ระดับน้ำที่วัดได้</div><div class="summary-value"><span id="summary-level">--</span> <small>ม.</small></div></div>
       </div>
       <div class="summary-item alert">
         <div class="summary-icon"><span class="material">error</span></div>
-        <div><div class="summary-label">สูงกว่าตลิ่ง</div><div class="summary-value"><span id="summary-alert">0</span> <small>จุด</small></div></div>
+        <div><div class="summary-label">อัตราการไหล Q</div><div class="summary-value"><span id="summary-flow">--</span> <small>m³/s</small></div></div>
       </div>
       <div class="summary-item normal">
         <div class="summary-icon"><span class="material">check_circle</span></div>
-        <div><div class="summary-label">ต่ำกว่าตลิ่ง</div><div class="summary-value"><span id="summary-normal">0</span> <small>จุด</small></div></div>
+        <div><div class="summary-label">สะพานที่แสดง</div><div class="summary-value"><span id="summary-bridges">0</span> <small>จุด</small></div></div>
       </div>
     </section>
     <section class="workspace" aria-label="แผนที่และสถานีเฝ้าระวัง">
       <div class="map-wrap">
         <div id="map" role="application" aria-label="แผนที่อำเภอบ้านโป่ง"></div>
-        <div class="map-error" id="map-error">ไม่สามารถโหลดแผนที่ได้ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต<br>รายการสถานีตัวอย่างยังดูได้จากแผงด้านข้าง</div>
+        <div class="map-error" id="map-error">ไม่สามารถโหลดแผนที่ได้ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต<br>รายการสถานีและสะพานยังดูได้จากแผงด้านข้าง</div>
         <div class="map-chip"><span class="material">near_me</span>อำเภอบ้านโป่ง · ราชบุรี</div>
         <div class="map-legend" aria-label="คำอธิบายสัญลักษณ์">
           <span class="legend-entry"><span class="legend-dot"></span>ปกติ</span>
           <span class="legend-entry"><span class="legend-dot watch"></span>เฝ้าระวัง</span>
           <span class="legend-entry"><span class="legend-dot alert"></span>เตือนภัย</span>
-          <span class="legend-entry"><span class="legend-dot" style="background:#167c72"></span>สถานีฝน</span>
+          <span class="legend-entry"><span class="legend-dot" style="background:#176e62"></span>สะพานอ้างอิง ไม่มีเครื่องวัด</span>
         </div>
         <div class="map-note">ภาพดาวเทียม © Esri · ขอบเขต <a href="https://www.geoboundaries.org/" target="_blank" rel="noreferrer">geoBoundaries</a> (2019)</div>
       </div>
       <aside class="side-panel">
         <div class="panel-head">
-          <div class="panel-title-row"><h2>สถานีกรมชลประทาน</h2><span class="count" id="visible-count">0</span></div>
-          <div class="panel-caption">ระดับน้ำและอัตราการไหลจาก SWOC</div>
+          <div class="panel-title-row"><h2>สถานีวัดน้ำบ้านโป่ง</h2><span class="count" id="visible-count">0</span></div>
+          <div class="panel-caption">ค่าระดับน้ำและ Q จากกรมชลประทาน RID SWOC</div>
           <label class="search"><span class="material">search</span><input id="station-search" type="search" placeholder="ค้นหาสถานี..." aria-label="ค้นหาสถานี"></label>
         </div>
         <div class="filters" role="group" aria-label="กรองสถานีตามสถานะ">
@@ -224,8 +232,8 @@
         </div>
         <div class="station-list" id="station-list"></div>
         <div class="empty-state" id="empty-state">กำลังรอข้อมูลสถานีจากกรมชลประทาน</div>
-        <div class="rainfall-summary" id="rainfall-summary"><strong>สถานีฝน HII บ้านโป่ง</strong>กำลังตรวจข้อมูล</div>
-        <div class="panel-foot"><strong>ต้นทาง: กรมชลประทาน SWOC</strong><span id="source-status">กำลังโหลดข้อมูล</span><br>ระบบตรวจข้อมูลทุก 10 นาที · เวลาวัดขึ้นกับรอบส่งข้อมูลของ RID</div>
+        <div class="bridge-section"><h3>สะพานข้ามแม่น้ำแม่กลอง</h3><div id="bridge-list"></div></div>
+        <div class="panel-foot"><strong>ต้นทางสถานี: กรมชลประทาน SWOC</strong><span id="source-status">กำลังโหลดข้อมูล</span><br>จุดอ้างอิงสะพานจาก OSM/เทศบาล · ไม่มีระดับน้ำหรือ Q เว้นแต่ระบุสถานี RID</div>
       </aside>
     </section>
   </main>
@@ -237,11 +245,13 @@
     const emptyState = document.querySelector("#empty-state");
     const visibleCount = document.querySelector("#visible-count");
     const sourceStatus = document.querySelector("#source-status");
+    const bridgeList = document.querySelector("#bridge-list");
     let activeFilter = "all";
     let map;
     let districtBounds;
-    let rainfallMarker;
+    let bridges = [];
     const markers = new Map();
+    const bridgeMarkers = new Map();
 
     function formatTime(value) {
       if (!value) return "ไม่พบเวลา";
@@ -262,41 +272,54 @@
 
     function updateSummary() {
       document.querySelector("#summary-total").textContent = stations.length;
-      document.querySelector("#summary-watch").textContent = stations.filter((station) => station.status === "watch").length;
-      document.querySelector("#summary-alert").textContent = stations.filter((station) => station.status === "alert").length;
-      document.querySelector("#summary-normal").textContent = stations.filter((station) => station.status === "normal").length;
+      const localGauge = stations.find((station) => station.stationCode === "K.55A");
+      document.querySelector("#summary-level").textContent = localGauge ? localGauge.waterLevelMeters.toFixed(2) : "--";
+      document.querySelector("#summary-flow").textContent = localGauge?.dischargeCubicMetersPerSecond == null
+        ? "--"
+        : new Intl.NumberFormat("th-TH", { maximumFractionDigits: 0 }).format(localGauge.dischargeCubicMetersPerSecond);
+      document.querySelector("#summary-bridges").textContent = bridges.length;
     }
 
-    function renderRainfall(rainfall, feedFresh) {
-      const summary = document.querySelector("#rainfall-summary");
-      const station = rainfall?.station;
-      const reading = rainfall?.measurements?.at(-1);
-      if (!rainfall || !station) {
-        summary.innerHTML = "<strong>สถานีฝน HII บ้านโป่ง</strong>ไม่มีข้อมูลสถานี";
-        return;
-      }
-
-      if (rainfall.status === "available" && reading) {
-        const timeQuality = reading.measuredAt.quality === "current" && feedFresh ? "" : " · เวลา/รอบข้อมูลต้องตรวจสอบ";
-        const rain3h = reading.rainfall3HoursMm == null ? "ไม่มีรายงาน" : `${reading.rainfall3HoursMm.toFixed(1)} มม.`;
-        const rain24h = reading.rainfall24HoursMm == null ? "ไม่มีรายงาน" : `${reading.rainfall24HoursMm.toFixed(1)} มม.`;
-        summary.innerHTML = `<strong>ฝน HII บ้านโป่ง${timeQuality}</strong>3 ชม. ${rain3h} · 24 ชม. ${rain24h}<br>วัดเมื่อ ${escapeHTML(formatTime(reading.measuredAt.iso))}`;
-      } else if (rainfall.status === "no-recent-readings") {
-        summary.innerHTML = `<strong>สถานีฝน HII บ้านโป่ง</strong>ต้นทางยังไม่มีค่าฝนในช่วงที่ขอ · ${feedFresh ? "" : "ข้อมูลเก่ากว่ารอบที่กำหนด · "}ตรวจล่าสุด ${escapeHTML(formatTime(rainfall.checkedAt))}`;
-      } else {
-        summary.innerHTML = `<strong>สถานีฝน HII บ้านโป่ง</strong>ติดต่อข้อมูลฝนไม่ได้ · ${feedFresh ? "" : "ข้อมูลเก่ากว่ารอบที่กำหนด · "}ตรวจล่าสุด ${escapeHTML(formatTime(rainfall.checkedAt))}`;
-      }
-
-      if (map && window.L && Number.isFinite(station.latitude) && Number.isFinite(station.longitude)) {
-        const icon = L.divIcon({
-          className: "",
-          html: '<div class="rainfall-pin"><span class="material">rainy</span></div>',
-          iconSize: [23, 23],
-          iconAnchor: [11, 11]
+    function renderBridgeReferences() {
+      const query = searchInput.value.trim().toLocaleLowerCase("th-TH");
+      const visibleBridges = bridges.filter((bridge) => `${bridge.name} ${bridge.road} ${bridge.river}`.toLocaleLowerCase("th-TH").includes(query));
+      bridgeList.replaceChildren(...visibleBridges.map((bridge) => {
+        const station = stations.find((item) => item.stationCode === bridge.stationCode);
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "bridge-reference";
+        const flowText = station
+          ? `RID Q ${formatDischarge(station.dischargeCubicMetersPerSecond)}`
+          : "ไม่มีเครื่องวัด RID";
+        button.innerHTML = `<span class="bridge-icon"><span class="material">${station ? "sensors" : "bridge"}</span></span><span><span class="bridge-name">${escapeHTML(bridge.name)}</span><span class="bridge-place">${escapeHTML(bridge.road)} · ${escapeHTML(bridge.river)}<br>${escapeHTML(bridge.source)}${station ? `<br>ระดับน้ำ ${station.waterLevelMeters.toFixed(2)} ม. · วัดเมื่อ ${escapeHTML(station.measuredAt.raw)}` : ""}</span></span><span class="bridge-reading ${station ? "" : "unmonitored"}">${flowText}</span>`;
+        button.addEventListener("click", () => {
+          const marker = station ? markers.get(station.id) : bridgeMarkers.get(bridge.id);
+          if (map && marker) {
+            map.setView([bridge.latitude, bridge.longitude], 14, { animate: true });
+            marker.openPopup();
+          }
         });
-        const popup = `<div class="popup-title">สถานีฝน HII บ้านโป่ง</div><div class="popup-detail">${escapeHTML(rainfall.status === "available" ? "มีข้อมูลฝน" : "ยังไม่มีค่าฝนจากต้นทาง")}</div>`;
-        if (!rainfallMarker) rainfallMarker = L.marker([station.latitude, station.longitude], { icon }).bindPopup(popup).addTo(map);
-        else rainfallMarker.setLatLng([station.latitude, station.longitude]).setIcon(icon).setPopupContent(popup);
+        return button;
+      }));
+
+      if (map && window.L) {
+        for (const bridge of bridges) {
+          if (bridge.stationCode) continue;
+          let marker = bridgeMarkers.get(bridge.id);
+          const icon = L.divIcon({
+            className: "",
+            html: '<div class="bridge-pin"><span class="material">bridge</span></div>',
+            iconSize: [23, 23],
+            iconAnchor: [11, 11]
+          });
+          const popup = `<div class="popup-title">${escapeHTML(bridge.name)}</div><div class="popup-detail">${escapeHTML(bridge.road)} · ${escapeHTML(bridge.river)}<br>ไม่มีข้อมูลวัดระดับน้ำ/Q จาก RID ณ จุดนี้<br>พิกัด: ${escapeHTML(bridge.coordinateQuality)}<br>ที่มา: <a href="${escapeHTML(bridge.sourceUrl)}" target="_blank" rel="noreferrer">${escapeHTML(bridge.source)}</a></div>`;
+          if (!marker) {
+            marker = L.marker([bridge.latitude, bridge.longitude], { icon }).bindPopup(popup).addTo(map);
+            bridgeMarkers.set(bridge.id, marker);
+          } else {
+            marker.setLatLng([bridge.latitude, bridge.longitude]).setIcon(icon).setPopupContent(popup);
+          }
+        }
       }
     }
 
@@ -326,6 +349,7 @@
       emptyState.textContent = stations.length ? "ไม่พบสถานีที่ตรงกับการค้นหา" : "ยังไม่มีข้อมูลสถานีจากกรมชลประทาน";
       emptyState.style.display = visible.length ? "none" : "block";
       updateSummary();
+      renderBridgeReferences();
       if (map && window.L) {
         const visibleIds = new Set(visible.map((station) => station.id));
         for (const station of stations) {
@@ -375,10 +399,11 @@
         }).sort((first, second) => Number(second.district === "บ้านโป่ง") - Number(first.district === "บ้านโป่ง") || first.stationCode.localeCompare(second.stationCode, "en", { numeric: true }));
 
         document.querySelector("#updated-time").textContent = formatTime(data.checkedAt);
-        renderRainfall(data.rainfall, feedFresh);
+        bridges = Array.isArray(data.bridges) ? data.bridges : [];
+        updateSummary();
         const timeProblems = stations.filter((station) => station.measuredAt.quality !== "current");
         sourceStatus.dataset.quality = timeProblems.length || !feedFresh ? "problem" : "current";
-        sourceStatus.textContent = `ดึงข้อมูล: ${formatTime(data.checkedAt)} (${feedFresh ? "ล่าสุด" : "เก่ากว่า 20 นาที"})\nสถานีระดับน้ำ: ${stations.length} จุดในลุ่มน้ำแม่กลอง\nเวลาวัด RID: ${timeProblems.length ? `ผิดปกติ/เก่าใน ${timeProblems.length} จุด` : "อยู่ในช่วงปกติ"}${timeProblems.length ? `\nตัวอย่าง: ${timeProblems.slice(0, 2).map((station) => `${station.stationCode}: ${station.measuredAt.raw ?? "ไม่พบเวลา"}`).join(" · ")}` : ""}`;
+        sourceStatus.textContent = `ดึงข้อมูล: ${formatTime(data.checkedAt)} (${feedFresh ? "ล่าสุด" : "เก่ากว่า 20 นาที"})\nสถานี RID ในบ้านโป่ง: ${stations.length} จุด · สะพานอ้างอิง ${bridges.length} จุด\nเวลาวัด RID: ${timeProblems.length ? "ไม่สอดคล้อง/ต้องตรวจสอบ" : "อยู่ในช่วงปกติ"}${timeProblems.length ? ` · ${timeProblems[0].measuredAt.raw ?? "ไม่พบเวลา"}` : ""}${data.collectionError ? `\nดึงรอบนี้ไม่สำเร็จ: ${data.collectionError}` : ""}`;
         renderStations();
       } catch (error) {
         sourceStatus.dataset.quality = "problem";
@@ -394,7 +419,10 @@
         renderStations();
       });
     });
-    searchInput.addEventListener("input", renderStations);
+    searchInput.addEventListener("input", () => {
+      renderStations();
+      renderBridgeReferences();
+    });
 
     if (window.L) {
       map = L.map("map", { zoomControl: true, scrollWheelZoom: true }).setView([13.8145, 99.8725], 12);
