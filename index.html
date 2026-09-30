@@ -111,6 +111,10 @@
     .panel-foot strong { color: #655222; font-weight: 600; }
     .panel-foot #source-status { display: block; white-space: pre-line; }
     .panel-foot #source-status[data-quality="problem"] { color: #8a5a0b; }
+    .rainfall-summary { padding: 11px 16px; border-top: 1px solid var(--line); color: var(--muted); background: #fbfcfa; font-size: 11px; line-height: 1.6; }
+    .rainfall-summary strong { display: block; margin-bottom: 2px; color: var(--ink); font-size: 12px; }
+    .rainfall-pin { width: 23px; height: 23px; display: grid; place-items: center; border: 2px solid #fff; border-radius: 6px; color: white; background: #167c72; box-shadow: 0 2px 7px rgba(18,38,34,.35); }
+    .rainfall-pin .material { font-size: 15px; }
     .material { font-family: "Material Symbols Outlined"; font-weight: normal; font-style: normal; font-size: 20px; line-height: 1; display: inline-block; white-space: nowrap; direction: ltr; -webkit-font-feature-settings: "liga"; -webkit-font-smoothing: antialiased; font-feature-settings: "liga"; }
     .station-pin { width: 22px; height: 22px; border: 3px solid #fff; border-radius: 50%; background: var(--green); box-shadow: 0 2px 7px rgba(18,38,34,.35), 0 0 0 1px rgba(25,52,44,.16); }
     .station-pin.watch { background: var(--amber); }
@@ -202,6 +206,7 @@
           <span class="legend-entry"><span class="legend-dot"></span>ปกติ</span>
           <span class="legend-entry"><span class="legend-dot watch"></span>เฝ้าระวัง</span>
           <span class="legend-entry"><span class="legend-dot alert"></span>เตือนภัย</span>
+          <span class="legend-entry"><span class="legend-dot" style="background:#167c72"></span>สถานีฝน</span>
         </div>
         <div class="map-note">ภาพดาวเทียม © Esri · ขอบเขต <a href="https://www.geoboundaries.org/" target="_blank" rel="noreferrer">geoBoundaries</a> (2019)</div>
       </div>
@@ -219,6 +224,7 @@
         </div>
         <div class="station-list" id="station-list"></div>
         <div class="empty-state" id="empty-state">กำลังรอข้อมูลสถานีจากกรมชลประทาน</div>
+        <div class="rainfall-summary" id="rainfall-summary"><strong>สถานีฝน HII บ้านโป่ง</strong>กำลังตรวจข้อมูล</div>
         <div class="panel-foot"><strong>ต้นทาง: กรมชลประทาน SWOC</strong><span id="source-status">กำลังโหลดข้อมูล</span><br>ระบบตรวจข้อมูลทุก 10 นาที · เวลาวัดขึ้นกับรอบส่งข้อมูลของ RID</div>
       </aside>
     </section>
@@ -234,6 +240,7 @@
     let activeFilter = "all";
     let map;
     let districtBounds;
+    let rainfallMarker;
     const markers = new Map();
 
     function formatTime(value) {
@@ -249,11 +256,48 @@
       })[character]);
     }
 
+    function formatDischarge(value) {
+      return value == null ? "ไม่มีรายงาน" : `${value.toFixed(1)} m³/s`;
+    }
+
     function updateSummary() {
       document.querySelector("#summary-total").textContent = stations.length;
       document.querySelector("#summary-watch").textContent = stations.filter((station) => station.status === "watch").length;
       document.querySelector("#summary-alert").textContent = stations.filter((station) => station.status === "alert").length;
       document.querySelector("#summary-normal").textContent = stations.filter((station) => station.status === "normal").length;
+    }
+
+    function renderRainfall(rainfall) {
+      const summary = document.querySelector("#rainfall-summary");
+      const station = rainfall?.station;
+      const reading = rainfall?.measurements?.at(-1);
+      if (!rainfall || !station) {
+        summary.innerHTML = "<strong>สถานีฝน HII บ้านโป่ง</strong>ไม่มีข้อมูลสถานี";
+        return;
+      }
+
+      if (rainfall.status === "available" && reading) {
+        const timeQuality = reading.measuredAt.quality === "current" ? "" : " · เวลาอ่านต้องตรวจสอบ";
+        const rain3h = reading.rainfall3HoursMm == null ? "ไม่มีรายงาน" : `${reading.rainfall3HoursMm.toFixed(1)} มม.`;
+        const rain24h = reading.rainfall24HoursMm == null ? "ไม่มีรายงาน" : `${reading.rainfall24HoursMm.toFixed(1)} มม.`;
+        summary.innerHTML = `<strong>ฝน HII บ้านโป่ง${timeQuality}</strong>3 ชม. ${rain3h} · 24 ชม. ${rain24h}<br>วัดเมื่อ ${escapeHTML(formatTime(reading.measuredAt.iso))}`;
+      } else if (rainfall.status === "no-recent-readings") {
+        summary.innerHTML = `<strong>สถานีฝน HII บ้านโป่ง</strong>ต้นทางยังไม่มีค่าฝนในช่วงที่ขอ · ตรวจล่าสุด ${escapeHTML(formatTime(rainfall.checkedAt))}`;
+      } else {
+        summary.innerHTML = `<strong>สถานีฝน HII บ้านโป่ง</strong>ติดต่อข้อมูลฝนไม่ได้ · ตรวจล่าสุด ${escapeHTML(formatTime(rainfall.checkedAt))}`;
+      }
+
+      if (map && window.L && Number.isFinite(station.latitude) && Number.isFinite(station.longitude)) {
+        const icon = L.divIcon({
+          className: "",
+          html: '<div class="rainfall-pin"><span class="material">rainy</span></div>',
+          iconSize: [23, 23],
+          iconAnchor: [11, 11]
+        });
+        const popup = `<div class="popup-title">สถานีฝน HII บ้านโป่ง</div><div class="popup-detail">${escapeHTML(rainfall.status === "available" ? "มีข้อมูลฝน" : "ยังไม่มีค่าฝนจากต้นทาง")}</div>`;
+        if (!rainfallMarker) rainfallMarker = L.marker([station.latitude, station.longitude], { icon }).bindPopup(popup).addTo(map);
+        else rainfallMarker.setLatLng([station.latitude, station.longitude]).setIcon(icon).setPopupContent(popup);
+      }
     }
 
     function renderStations() {
@@ -268,8 +312,8 @@
         button.type = "button";
         button.className = "station";
         button.dataset.stationId = station.id;
-        button.setAttribute("aria-label", `${station.name} ${station.stationCode}, ระดับน้ำ ${station.waterLevelMeters.toFixed(2)} เมตร, อัตราการไหล ${station.dischargeCubicMetersPerSecond.toFixed(1)} ลูกบาศก์เมตรต่อวินาที, ${station.condition}`);
-        button.innerHTML = `<span class="station-marker ${station.status}"></span><span><span class="station-name">${escapeHTML(station.name)} · ${escapeHTML(station.stationCode)}</span><span class="station-place">${escapeHTML(station.place)}</span><span class="status-label ${station.status}">${escapeHTML(station.condition)}</span></span><span class="station-reading"><span class="reading-value">${station.waterLevelMeters.toFixed(2)}</span><br><span class="reading-unit">เมตร</span><br><span class="reading-unit">Q ${station.dischargeCubicMetersPerSecond.toFixed(1)} m³/s</span></span>`;
+        button.setAttribute("aria-label", `${station.name} ${station.stationCode}, ระดับน้ำ ${station.waterLevelMeters.toFixed(2)} เมตร, อัตราการไหล ${formatDischarge(station.dischargeCubicMetersPerSecond)}, ${station.condition}`);
+        button.innerHTML = `<span class="station-marker ${station.status}"></span><span><span class="station-name">${escapeHTML(station.name)} · ${escapeHTML(station.stationCode)}</span><span class="station-place">${escapeHTML(station.place)}</span><span class="status-label ${station.status}">${escapeHTML(station.condition)}</span></span><span class="station-reading"><span class="reading-value">${station.waterLevelMeters.toFixed(2)}</span><br><span class="reading-unit">เมตร</span><br><span class="reading-unit">Q ${formatDischarge(station.dischargeCubicMetersPerSecond)}</span></span>`;
         button.addEventListener("click", () => {
           if (map && markers.has(station.id)) {
             map.setView([station.latitude, station.longitude], 14, { animate: true });
@@ -292,7 +336,7 @@
             iconSize: [22, 22],
             iconAnchor: [11, 11]
           });
-          const popup = `<div class="popup-title">${escapeHTML(station.name)} · ${escapeHTML(station.stationCode)}</div><div class="popup-detail">ระดับน้ำ ${station.waterLevelMeters.toFixed(2)} ม. · Q ${station.dischargeCubicMetersPerSecond.toFixed(1)} m³/s<br>${escapeHTML(station.condition)}<br>เวลาวัดจาก RID: ${escapeHTML(station.measuredAt.raw)}</div>`;
+          const popup = `<div class="popup-title">${escapeHTML(station.name)} · ${escapeHTML(station.stationCode)}</div><div class="popup-detail">ระดับน้ำ ${station.waterLevelMeters.toFixed(2)} ม. · Q ${formatDischarge(station.dischargeCubicMetersPerSecond)}<br>${escapeHTML(station.condition)}<br>เวลาวัดจาก RID: ${escapeHTML(station.measuredAt.raw)}</div>`;
           if (!marker) {
             marker = L.marker([station.latitude, station.longitude], { icon }).bindPopup(popup);
             markers.set(station.id, marker);
@@ -326,12 +370,13 @@
                 ? `สูงกว่าตลิ่ง ${(station.waterLevelMeters - station.bankLevelMeters).toFixed(2)} ม. · RID`
                 : station.ridTrend || "RID ยังไม่ระบุสถานะ"
           };
-        });
+        }).sort((first, second) => Number(second.district === "บ้านโป่ง") - Number(first.district === "บ้านโป่ง") || first.stationCode.localeCompare(second.stationCode, "en", { numeric: true }));
 
         document.querySelector("#updated-time").textContent = formatTime(data.checkedAt);
+        renderRainfall(data.rainfall);
         const timeProblems = stations.filter((station) => station.measuredAt.quality !== "current");
         sourceStatus.dataset.quality = timeProblems.length ? "problem" : "current";
-        sourceStatus.textContent = `ดึงข้อมูล: ${formatTime(data.checkedAt)}\nเวลาวัด RID: ${timeProblems.length ? "ไม่สอดคล้อง/เก่า โปรดตรวจสอบ" : "อยู่ในช่วงปกติ"}\n${timeProblems.map((station) => `${station.stationCode}: ${station.measuredAt.raw ?? "ไม่พบเวลา"}`).join("\n")}`;
+        sourceStatus.textContent = `ดึงข้อมูล: ${formatTime(data.checkedAt)}\nสถานีระดับน้ำ: ${stations.length} จุดในลุ่มน้ำแม่กลอง\nเวลาวัด RID: ${timeProblems.length ? `ผิดปกติ/เก่าใน ${timeProblems.length} จุด` : "อยู่ในช่วงปกติ"}\n${timeProblems.slice(0, 2).map((station) => `${station.stationCode}: ${station.measuredAt.raw ?? "ไม่พบเวลา"}`).join("\n")}`;
         renderStations();
       } catch (error) {
         sourceStatus.dataset.quality = "problem";
