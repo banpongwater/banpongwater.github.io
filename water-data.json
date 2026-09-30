@@ -70,5 +70,6 @@
       "source": "แขวงทางหลวงชนบทราชบุรี; Yellow Pages bridge listing",
       "sourceUrl": "https://www.yellowpages.co.th/"
     }
-  ]
+  ],
+  "collectionError": "fetch failed"
 }
