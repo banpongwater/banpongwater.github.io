@@ -1,8 +1,9 @@
-import { writeFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 const sourceUrl = "https://swoc.rid.go.th/webservice/keystation/getKeyStationGeoJson.ashx";
 const rainServiceUrl = "https://swoc.rid.go.th/webservice/weather/RainService.svc/getHIITeleFromIDRange";
+const outputPath = path.join(process.cwd(), "water-data.json");
 const rainStation = {
   stationId: 709,
   name: "บ้านโป่ง",
@@ -14,6 +15,26 @@ const thaiMonths = new Map([
   ["พฤษภาคม", 5], ["มิถุนายน", 6], ["กรกฎาคม", 7], ["สิงหาคม", 8],
   ["กันยายน", 9], ["ตุลาคม", 10], ["พฤศจิกายน", 11], ["ธันวาคม", 12]
 ]);
+
+let previousSnapshot = null;
+try {
+  previousSnapshot = JSON.parse(await readFile(outputPath, "utf8"));
+} catch {
+  previousSnapshot = null;
+}
+
+async function fetchWithRetry(url, options = {}, attempts = 4) {
+  let lastError;
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    try {
+      return await fetch(url, { ...options, signal: AbortSignal.timeout(25000) });
+    } catch (error) {
+      lastError = error;
+      if (attempt + 1 < attempts) await new Promise((resolve) => setTimeout(resolve, 1500 * (2 ** attempt)));
+    }
+  }
+  throw lastError;
+}
 
 function parseThaiDate(value) {
   const match = value?.match(/(\d{1,2})\s+(มกราคม|กุมภาพันธ์|มีนาคม|เมษายน|พฤษภาคม|มิถุนายน|กรกฎาคม|สิงหาคม|กันยายน|ตุลาคม|พฤศจิกายน|ธันวาคม)\s+(\d{4})\s+เวลา\s+(\d{1,2}):(\d{2})/);
@@ -59,14 +80,20 @@ function optionalNumber(value) {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
-const response = await fetch(sourceUrl, {
-  headers: { accept: "application/json" },
-  signal: AbortSignal.timeout(20000)
-});
-if (!response.ok) throw new Error(`RID SWOC returned HTTP ${response.status}`);
-
-const payload = JSON.parse(await response.text());
-if (!Array.isArray(payload.features)) throw new Error("RID SWOC response has no feature list");
+let response;
+let payload;
+try {
+  response = await fetchWithRetry(sourceUrl, { headers: { accept: "application/json" } });
+  if (!response.ok) throw new Error(`RID SWOC returned HTTP ${response.status}`);
+  payload = JSON.parse(await response.text());
+  if (!Array.isArray(payload.features)) throw new Error("RID SWOC response has no feature list");
+} catch (error) {
+  if (Array.isArray(previousSnapshot?.stations) && previousSnapshot.stations.length > 0) {
+    console.error(`RID telemetry unavailable after retries; preserving the previous snapshot: ${error.message}`);
+    process.exit(0);
+  }
+  throw error;
+}
 
 const checkedAt = new Date();
 const stations = payload.features.flatMap((feature) => {
@@ -115,11 +142,10 @@ let rainfall = {
 try {
   const timeEnd = bangkokDate(checkedAt);
   const timeStart = bangkokDate(new Date(checkedAt.getTime() - 10 * 24 * 60 * 60 * 1000));
-  const rainResponse = await fetch(rainServiceUrl, {
+  const rainResponse = await fetchWithRetry(rainServiceUrl, {
     method: "POST",
     headers: { "content-type": "application/json;charset=utf-8", accept: "application/json" },
-    body: JSON.stringify({ rainWeatherModel: { StationID: rainStation.stationId, TimeStart: timeStart, TimeEnd: timeEnd } }),
-    signal: AbortSignal.timeout(20000)
+    body: JSON.stringify({ rainWeatherModel: { StationID: rainStation.stationId, TimeStart: timeStart, TimeEnd: timeEnd } })
   });
   if (!rainResponse.ok) throw new Error(`RID rainfall returned HTTP ${rainResponse.status}`);
   const rainRows = await rainResponse.json();
@@ -152,7 +178,6 @@ const document = {
   rainfall
 };
 
-const outputPath = path.join(process.cwd(), "water-data.json");
 await writeFile(outputPath, `${JSON.stringify(document, null, 2)}\n`);
 console.log(`Wrote ${stations.length} RID stations to ${outputPath}`);
 for (const station of stations) {

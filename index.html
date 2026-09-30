@@ -267,7 +267,7 @@
       document.querySelector("#summary-normal").textContent = stations.filter((station) => station.status === "normal").length;
     }
 
-    function renderRainfall(rainfall) {
+    function renderRainfall(rainfall, feedFresh) {
       const summary = document.querySelector("#rainfall-summary");
       const station = rainfall?.station;
       const reading = rainfall?.measurements?.at(-1);
@@ -277,14 +277,14 @@
       }
 
       if (rainfall.status === "available" && reading) {
-        const timeQuality = reading.measuredAt.quality === "current" ? "" : " · เวลาอ่านต้องตรวจสอบ";
+        const timeQuality = reading.measuredAt.quality === "current" && feedFresh ? "" : " · เวลา/รอบข้อมูลต้องตรวจสอบ";
         const rain3h = reading.rainfall3HoursMm == null ? "ไม่มีรายงาน" : `${reading.rainfall3HoursMm.toFixed(1)} มม.`;
         const rain24h = reading.rainfall24HoursMm == null ? "ไม่มีรายงาน" : `${reading.rainfall24HoursMm.toFixed(1)} มม.`;
         summary.innerHTML = `<strong>ฝน HII บ้านโป่ง${timeQuality}</strong>3 ชม. ${rain3h} · 24 ชม. ${rain24h}<br>วัดเมื่อ ${escapeHTML(formatTime(reading.measuredAt.iso))}`;
       } else if (rainfall.status === "no-recent-readings") {
-        summary.innerHTML = `<strong>สถานีฝน HII บ้านโป่ง</strong>ต้นทางยังไม่มีค่าฝนในช่วงที่ขอ · ตรวจล่าสุด ${escapeHTML(formatTime(rainfall.checkedAt))}`;
+        summary.innerHTML = `<strong>สถานีฝน HII บ้านโป่ง</strong>ต้นทางยังไม่มีค่าฝนในช่วงที่ขอ · ${feedFresh ? "" : "ข้อมูลเก่ากว่ารอบที่กำหนด · "}ตรวจล่าสุด ${escapeHTML(formatTime(rainfall.checkedAt))}`;
       } else {
-        summary.innerHTML = `<strong>สถานีฝน HII บ้านโป่ง</strong>ติดต่อข้อมูลฝนไม่ได้ · ตรวจล่าสุด ${escapeHTML(formatTime(rainfall.checkedAt))}`;
+        summary.innerHTML = `<strong>สถานีฝน HII บ้านโป่ง</strong>ติดต่อข้อมูลฝนไม่ได้ · ${feedFresh ? "" : "ข้อมูลเก่ากว่ารอบที่กำหนด · "}ตรวจล่าสุด ${escapeHTML(formatTime(rainfall.checkedAt))}`;
       }
 
       if (map && window.L && Number.isFinite(station.latitude) && Number.isFinite(station.longitude)) {
@@ -356,9 +356,11 @@
         const data = await response.json();
         if (!Array.isArray(data.stations) || !data.checkedAt) throw new Error("รูปแบบข้อมูล RID ไม่ถูกต้อง");
 
+        const fetchAgeMinutes = Math.round((Date.now() - new Date(data.checkedAt).getTime()) / 60000);
+        const feedFresh = fetchAgeMinutes >= -5 && fetchAgeMinutes <= 20;
         stations = data.stations.map((station) => {
           const aboveBank = station.bankLevelMeters != null && station.waterLevelMeters >= station.bankLevelMeters;
-          const timeReliable = station.measuredAt?.quality === "current";
+          const timeReliable = feedFresh && station.measuredAt?.quality === "current";
           return {
             ...station,
             id: station.stationCode,
@@ -373,10 +375,10 @@
         }).sort((first, second) => Number(second.district === "บ้านโป่ง") - Number(first.district === "บ้านโป่ง") || first.stationCode.localeCompare(second.stationCode, "en", { numeric: true }));
 
         document.querySelector("#updated-time").textContent = formatTime(data.checkedAt);
-        renderRainfall(data.rainfall);
+        renderRainfall(data.rainfall, feedFresh);
         const timeProblems = stations.filter((station) => station.measuredAt.quality !== "current");
-        sourceStatus.dataset.quality = timeProblems.length ? "problem" : "current";
-        sourceStatus.textContent = `ดึงข้อมูล: ${formatTime(data.checkedAt)}\nสถานีระดับน้ำ: ${stations.length} จุดในลุ่มน้ำแม่กลอง\nเวลาวัด RID: ${timeProblems.length ? `ผิดปกติ/เก่าใน ${timeProblems.length} จุด` : "อยู่ในช่วงปกติ"}\n${timeProblems.slice(0, 2).map((station) => `${station.stationCode}: ${station.measuredAt.raw ?? "ไม่พบเวลา"}`).join("\n")}`;
+        sourceStatus.dataset.quality = timeProblems.length || !feedFresh ? "problem" : "current";
+        sourceStatus.textContent = `ดึงข้อมูล: ${formatTime(data.checkedAt)} (${feedFresh ? "ล่าสุด" : "เก่ากว่า 20 นาที"})\nสถานีระดับน้ำ: ${stations.length} จุดในลุ่มน้ำแม่กลอง\nเวลาวัด RID: ${timeProblems.length ? `ผิดปกติ/เก่าใน ${timeProblems.length} จุด` : "อยู่ในช่วงปกติ"}${timeProblems.length ? `\nตัวอย่าง: ${timeProblems.slice(0, 2).map((station) => `${station.stationCode}: ${station.measuredAt.raw ?? "ไม่พบเวลา"}`).join(" · ")}` : ""}`;
         renderStations();
       } catch (error) {
         sourceStatus.dataset.quality = "problem";
