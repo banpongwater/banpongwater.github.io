@@ -338,7 +338,8 @@
     const PRIMARY_STATION = "K.55A";
     // RID posts hourly and ThaiWater mirrors K.55A ~2 h late, so only readings over 3 h old are "not current".
     const STALE_MINUTES = 180;
-    const REFRESH_MS = 5 * 60 * 1000;
+    // ThaiWater itself updates about every 10 minutes; polling faster only adds load on it.
+    const REFRESH_MS = 10 * 60 * 1000;
     const HISTORY_HOURS = 48;
     // ThaiWater allows this site's origin (CORS), so visitors get live readings without waiting for the
     // GitHub Actions snapshot, which GitHub's scheduler often runs hours late.
@@ -576,7 +577,7 @@
       const timer = setTimeout(() => controller.abort(), timeoutMs);
       try {
         const response = await fetch(url, { cache: "no-store", signal: controller.signal });
-        if (!response.ok) throw new Error(`โหลดข้อมูลไม่สำเร็จ (HTTP ${response.status})`);
+        if (!response.ok) throw Object.assign(new Error(`โหลดข้อมูลไม่สำเร็จ (HTTP ${response.status})`), { status: response.status, retryAfter: Number(response.headers.get("retry-after")) || null });
         return await response.json();
       } catch (error) {
         if (error.name === "AbortError") throw new Error("โหลดข้อมูลนานเกินไป");
@@ -585,6 +586,25 @@
       } finally {
         clearTimeout(timer);
       }
+    }
+
+    // ThaiWater rejects bursts of parallel requests with HTTP 429, so its calls go through a
+    // one-at-a-time queue and back off briefly when rate-limited.
+    let thaiWaterQueue = Promise.resolve();
+    function fetchThaiWater(url) {
+      const run = async () => {
+        for (let attempt = 0; ; attempt += 1) {
+          try {
+            return await fetchJSON(url, 25000);
+          } catch (error) {
+            if (error.status !== 429 || attempt >= 2) throw error;
+            await new Promise((resolve) => setTimeout(resolve, (error.retryAfter ?? (attempt + 1) * 4) * 1000));
+          }
+        }
+      };
+      const result = thaiWaterQueue.then(run, run);
+      thaiWaterQueue = result.catch(() => {});
+      return result;
     }
 
     function parseThaiWaterDate(value) {
@@ -674,7 +694,7 @@
 
     async function refreshLive() {
       try {
-        const data = await fetchJSON(LIVE_URL, 25000);
+        const data = await fetchThaiWater(LIVE_URL);
         const rows = data?.waterlevel_data?.data;
         if (!Array.isArray(rows)) throw new Error("รูปแบบข้อมูล ThaiWater ไม่ถูกต้อง");
         liveStations = rows.map(toThaiWaterStation).filter(Boolean);
@@ -719,19 +739,21 @@
         button.addEventListener("click", () => { chartCode = station.stationCode; renderChartChips(); loadHistory(chartCode, true); });
         return button;
       }));
-      if (!chartPoints.length && withHistory.length) loadHistory(chartCode, false);
     }
 
+    const historyInFlight = new Set();
     async function loadHistory(code, force) {
+      if (historyInFlight.has(code)) return;
       const station = stations.find((item) => item.stationCode === code);
       if (!station?.thaiWaterId) { if (stations.length) showChartMessage("สถานีนี้ไม่มีข้อมูลย้อนหลัง"); return; }
       const cached = historyCache.get(code);
       if (cached && Date.now() - cached.at < 10 * 60 * 1000) { chartPoints = cached.points; drawChart(); return; }
       if (cached && !force) { chartPoints = cached.points; drawChart(); }
+      historyInFlight.add(code);
       const now = Date.now();
       const url = `${THAIWATER}/waterlevel_graph?station_type=tele_waterlevel&station_id=${encodeURIComponent(station.thaiWaterId)}&start_date=${bangkokDate(now - HISTORY_HOURS * 3600 * 1000)}&end_date=${bangkokDate(now + 24 * 3600 * 1000)}`;
       try {
-        const data = await fetchJSON(url, 25000);
+        const data = await fetchThaiWater(url);
         const rows = data?.data?.graph_data;
         if (!Array.isArray(rows)) throw new Error("bad graph");
         const since = now - HISTORY_HOURS * 3600 * 1000;
@@ -742,6 +764,8 @@
         if (code === chartCode) { chartPoints = points; drawChart(); }
       } catch {
         if (code === chartCode && !chartPoints.length) showChartMessage("โหลดกราฟย้อนหลังไม่ได้ในขณะนี้ ข้อมูลปัจจุบันด้านบนยังใช้ได้ตามปกติ");
+      } finally {
+        historyInFlight.delete(code);
       }
     }
 
