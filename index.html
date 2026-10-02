@@ -6,14 +6,14 @@
   <meta name="theme-color" content="#0b5f73">
   <meta name="description" content="ระดับน้ำแม่น้ำแม่กลอง อำเภอบ้านโป่ง จังหวัดราชบุรี แบบเรียลไทม์ พร้อมกราฟย้อนหลังและแจ้งเตือนทุก 30 นาที ข้อมูลจากกรมชลประทานและ ThaiWater">
   <title>ระดับน้ำบ้านโป่ง</title>
-  <link rel="canonical" href="https://nongmickey.github.io/banpong-water-warning/">
+  <link rel="canonical" href="https://banpongwater.github.io/">
   <!-- Link previews in LINE, Facebook, Messenger and X need absolute URLs. -->
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="ระดับน้ำบ้านโป่ง">
   <meta property="og:title" content="ระดับน้ำบ้านโป่ง · แม่น้ำแม่กลอง">
   <meta property="og:description" content="เช็กระดับน้ำแม่น้ำแม่กลอง อ.บ้านโป่ง แบบเรียลไทม์ ดูว่าน้ำล้นตลิ่งหรือไม่ พร้อมกราฟย้อนหลัง 48 ชม. และแจ้งเตือนทุก 30 นาที">
-  <meta property="og:url" content="https://nongmickey.github.io/banpong-water-warning/">
-  <meta property="og:image" content="https://nongmickey.github.io/banpong-water-warning/og-image.png">
+  <meta property="og:url" content="https://banpongwater.github.io/">
+  <meta property="og:image" content="https://banpongwater.github.io/og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:locale" content="th_TH">
@@ -897,7 +897,7 @@
 
     /* ---------- Share ---------- */
     $("#share-btn").addEventListener("click", async () => {
-      const url = "https://nongmickey.github.io/banpong-water-warning/";
+      const url = "https://banpongwater.github.io/";
       const station = primaryStation();
       const text = station ? `ระดับน้ำบ้านโป่งตอนนี้ ${station.waterLevelMeters.toFixed(2)} ม. · ${STATUS[station.status].word}` : "ระดับน้ำบ้านโป่ง";
       try {
@@ -1003,7 +1003,7 @@
     async function loadBoundary() {
       let data;
       try { data = await fetchJSON("./ban-pong-boundary.geojson"); }
-      catch { data = await fetchJSON("https://raw.githubusercontent.com/Nongmickey/banpong-water-warning/main/ban-pong-boundary.geojson"); }
+      catch { data = await fetchJSON("https://raw.githubusercontent.com/banpongwater/banpongwater.github.io/main/ban-pong-boundary.geojson"); }
       const feature = data.features?.find((f) => f.properties?.shapeName === "Ban Pong");
       if (!feature) return;
       const layer = L.geoJSON(feature, { style: { color: "#ffd83d", weight: 3, dashArray: "6 4", fillColor: "#30c5b5", fillOpacity: 0.08 } }).addTo(map);
