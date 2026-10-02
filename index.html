@@ -3,484 +3,1030 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f4f5f1">
-  <title>แผนที่เฝ้าระวังระดับน้ำ | บ้านโป่ง</title>
+  <meta name="theme-color" content="#0b5f73">
+  <meta name="description" content="ระดับน้ำแม่น้ำแม่กลอง อำเภอบ้านโป่ง จังหวัดราชบุรี แบบเรียลไทม์ พร้อมกราฟย้อนหลังและแจ้งเตือนทุก 30 นาที ข้อมูลจากกรมชลประทานและ ThaiWater">
+  <title>ระดับน้ำบ้านโป่ง</title>
+  <link rel="canonical" href="https://nongmickey.github.io/banpong-water-warning/">
+  <!-- Link previews in LINE, Facebook, Messenger and X need absolute URLs. -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="ระดับน้ำบ้านโป่ง">
+  <meta property="og:title" content="ระดับน้ำบ้านโป่ง · แม่น้ำแม่กลอง">
+  <meta property="og:description" content="เช็กระดับน้ำแม่น้ำแม่กลอง อ.บ้านโป่ง แบบเรียลไทม์ ดูว่าน้ำล้นตลิ่งหรือไม่ พร้อมกราฟย้อนหลัง 48 ชม. และแจ้งเตือนทุก 30 นาที">
+  <meta property="og:url" content="https://nongmickey.github.io/banpong-water-warning/">
+  <meta property="og:image" content="https://nongmickey.github.io/banpong-water-warning/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="th_TH">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="icon" href="./icon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <meta name="apple-mobile-web-app-title" content="น้ำบ้านโป่ง">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="preconnect" href="https://api-v3.thaiwater.net" crossorigin>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="preconnect" href="https://unpkg.com">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,500,1,0" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
   <style>
     :root {
       color-scheme: light;
-      --ink: #202b2b;
-      --muted: #6c7774;
-      --paper: #f4f5f1;
-      --surface: #fff;
-      --line: #e4e8e2;
-      --teal: #167c72;
-      --teal-soft: #e7f3ef;
-      --amber: #c88119;
-      --amber-soft: #fff3dc;
-      --red: #c54b45;
-      --red-soft: #fbe9e6;
-      --green: #3f8b65;
-      --green-soft: #e8f3eb;
-      --shadow: 0 12px 34px rgba(32, 43, 43, .07);
+      --bg: #f1f5f8;
+      --surface: #ffffff;
+      --soft: #f5f8fa;
+      --ink: #12202e;
+      --muted: #5a6979;
+      --line: #dfe6ec;
+      --brand: #0b6f84;
+      --normal: #15895a;
+      --normal-bg: #e4f6ec;
+      --watch: #b87300;
+      --watch-bg: #fff3d6;
+      --alert: #cc3a32;
+      --alert-bg: #fde6e3;
+      --radius: 20px;
+      --shadow: 0 1px 2px rgba(18, 32, 46, .05), 0 8px 24px rgba(18, 32, 46, .07);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        color-scheme: dark;
+        --bg: #0a121b;
+        --surface: #111d29;
+        --soft: #172636;
+        --ink: #e8eef4;
+        --muted: #97a7b8;
+        --line: #233548;
+        --brand: #45c3d3;
+        --normal: #43cf8d;
+        --normal-bg: rgba(67, 207, 141, .14);
+        --watch: #f3b641;
+        --watch-bg: rgba(243, 182, 65, .15);
+        --alert: #ff6d63;
+        --alert-bg: rgba(255, 109, 99, .15);
+        --shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 8px 24px rgba(0, 0, 0, .3);
+      }
     }
     * { box-sizing: border-box; }
-    body { margin: 0; background: var(--paper); color: var(--ink); font-family: "IBM Plex Sans Thai", sans-serif; }
-    button, input { font: inherit; }
-    button { color: inherit; }
-    .topline { height: 34px; padding: 0 max(22px, calc((100vw - 1480px) / 2)); display: flex; align-items: center; justify-content: space-between; color: #dbe6e1; background: #263938; font-size: 12px; }
-    .topline-label { display: flex; gap: 9px; align-items: center; }
-    .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #e6bd56; box-shadow: 0 0 0 3px rgba(230,189,86,.15); }
-    .header { max-width: 1480px; min-height: 86px; margin: auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; gap: 18px; }
-    .brand { display: flex; align-items: center; gap: 13px; min-width: 0; }
-    .brand-mark { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 13px; color: white; background: var(--teal); }
-    .brand-mark .material { font-size: 25px; }
-    .eyebrow { color: var(--teal); font-size: 11px; font-weight: 700; letter-spacing: .04em; }
-    h1 { margin: 1px 0 0; font-size: 20px; line-height: 1.35; font-weight: 700; }
-    .header-meta { display: flex; align-items: center; gap: 10px; }
-    .prototype-pill { display: inline-flex; align-items: center; gap: 7px; padding: 7px 11px; border: 1px solid #ead9ae; border-radius: 5px; color: #7b5a16; background: #fff8e8; font-size: 12px; font-weight: 600; white-space: nowrap; }
-    .prototype-pill .material { font-size: 17px; }
-    .source-pill { border-color: #c9e1d8; color: #176e62; background: #edf7f2; }
-    .updated { color: var(--muted); font-size: 12px; text-align: right; line-height: 1.6; }
-    .updated strong { color: var(--ink); font-weight: 600; }
-    main { max-width: 1480px; margin: auto; padding: 0 24px 28px; }
-    .summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom: 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); box-shadow: var(--shadow); }
-    .summary-item { min-height: 73px; padding: 14px 20px; display: flex; align-items: center; gap: 13px; }
-    .summary-item + .summary-item { border-left: 1px solid var(--line); }
-    .summary-icon { width: 38px; height: 38px; flex: none; display: grid; place-items: center; border-radius: 10px; color: var(--teal); background: var(--teal-soft); }
-    .summary-item.warning .summary-icon { color: var(--amber); background: var(--amber-soft); }
-    .summary-item.alert .summary-icon { color: var(--red); background: var(--red-soft); }
-    .summary-item.normal .summary-icon { color: var(--green); background: var(--green-soft); }
-    .summary-icon .material { font-size: 21px; }
-    .summary-label { color: var(--muted); font-size: 12px; }
-    .summary-value { margin-top: 1px; font-size: 19px; font-weight: 700; line-height: 1.15; }
-    .summary-value small { margin-left: 3px; color: var(--muted); font-size: 11px; font-weight: 500; }
-    .workspace { min-height: min(690px, calc(100vh - 245px)); display: grid; grid-template-columns: minmax(0, 1fr) 360px; overflow: hidden; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); box-shadow: var(--shadow); }
-    .map-wrap { min-height: 600px; position: relative; background-color: #e8eeea; background-image: linear-gradient(30deg, transparent 48%, rgba(57, 105, 88, .055) 49%, rgba(57, 105, 88, .055) 50%, transparent 51%), linear-gradient(120deg, transparent 48%, rgba(57, 105, 88, .045) 49%, rgba(57, 105, 88, .045) 50%, transparent 51%); background-size: 42px 42px; }
-    #map { position: absolute; inset: 0; z-index: 1; }
-    .map-chip { position: absolute; top: 16px; left: 16px; z-index: 500; display: flex; align-items: center; gap: 7px; max-width: calc(100% - 32px); padding: 8px 12px; border: 1px solid rgba(32,43,43,.1); border-radius: 5px; background: rgba(255,255,255,.95); box-shadow: 0 2px 12px rgba(32,43,43,.1); font-size: 12px; font-weight: 600; }
-    .map-chip .material { color: var(--teal); font-size: 18px; }
-    .map-legend { position: absolute; bottom: 25px; left: 14px; z-index: 500; display: flex; flex-wrap: wrap; gap: 12px; padding: 9px 12px; border: 1px solid rgba(32,43,43,.1); border-radius: 5px; background: rgba(255,255,255,.95); box-shadow: 0 2px 12px rgba(32,43,43,.1); font-size: 11px; }
-    .legend-entry { display: inline-flex; align-items: center; gap: 6px; }
-    .legend-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
-    .legend-dot.watch { background: var(--amber); }
-    .legend-dot.alert { background: var(--red); }
-    .map-note { position: absolute; right: 12px; bottom: 25px; z-index: 500; padding: 6px 9px; border-radius: 4px; background: rgba(255,255,255,.91); color: #64716c; font-size: 10px; }
-    .map-note a { color: #315f58; text-decoration: none; }
-    .map-note a:hover { text-decoration: underline; }
-    .leaflet-overlay-pane path { filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .85)); }
-    .leaflet-control-layers { border: 1px solid rgba(32,43,43,.12) !important; border-radius: 5px !important; box-shadow: 0 2px 12px rgba(32,43,43,.12) !important; font-family: "IBM Plex Sans Thai", sans-serif; font-size: 12px; }
-    .leaflet-control-layers-expanded { padding: 9px 11px; }
-    .leaflet-control-layers label { margin: 4px 0; }
-    .map-error { position: absolute; inset: 0; z-index: 2; display: none; align-items: center; justify-content: center; padding: 24px; color: #58645f; text-align: center; font-size: 14px; }
-    .map-error.visible { display: flex; }
-    .side-panel { min-width: 0; display: flex; flex-direction: column; border-left: 1px solid var(--line); }
-    .panel-head { padding: 18px 18px 14px; border-bottom: 1px solid var(--line); }
-    .panel-title-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-    h2 { margin: 0; font-size: 16px; font-weight: 700; }
-    .count { min-width: 25px; padding: 2px 7px; border-radius: 10px; color: var(--teal); background: var(--teal-soft); font-size: 11px; font-weight: 700; text-align: center; }
-    .panel-caption { margin-top: 2px; color: var(--muted); font-size: 11px; }
-    .search { position: relative; margin-top: 13px; }
-    .search .material { position: absolute; top: 50%; left: 10px; transform: translateY(-50%); color: #84908c; font-size: 19px; pointer-events: none; }
-    .search input { width: 100%; height: 37px; padding: 0 10px 0 36px; border: 1px solid #dce2dc; border-radius: 5px; outline: none; background: #fbfcfa; font-size: 12px; }
-    .search input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(22,124,114,.1); }
-    .filters { padding: 11px 14px; display: flex; gap: 5px; border-bottom: 1px solid var(--line); }
-    .filter-btn { min-height: 30px; padding: 4px 9px; border: 1px solid transparent; border-radius: 4px; color: #697570; background: transparent; font-size: 11px; cursor: pointer; }
-    .filter-btn:hover { background: #f4f6f3; }
-    .filter-btn[aria-pressed="true"] { border-color: #cce2dc; color: #12675f; background: #edf6f2; font-weight: 600; }
-    .station-list { flex: 1; overflow: auto; }
-    .station { width: 100%; padding: 13px 16px; display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; gap: 10px; align-items: start; border: 0; border-bottom: 1px solid #edf0ec; background: white; text-align: left; cursor: pointer; transition: background .15s ease; }
-    .station:hover, .station:focus-visible { outline: none; background: #f6f9f6; }
-    .station-marker { width: 9px; height: 9px; margin-top: 5px; border: 2px solid white; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 1px var(--green); }
-    .station-marker.watch { background: var(--amber); box-shadow: 0 0 0 1px var(--amber); }
-    .station-marker.alert { background: var(--red); box-shadow: 0 0 0 1px var(--red); }
-    .station-name { font-size: 12px; font-weight: 600; line-height: 1.4; }
-    .station-place { margin-top: 2px; color: var(--muted); font-size: 10px; }
-    .station-reading { text-align: right; white-space: nowrap; }
-    .reading-value { font-size: 14px; font-weight: 700; line-height: 1.2; }
-    .reading-unit { color: var(--muted); font-size: 9px; }
-    .status-label { display: inline-block; margin-top: 4px; padding: 2px 6px; border-radius: 3px; color: #33734f; background: var(--green-soft); font-size: 9px; }
-    .status-label.watch { color: #885d12; background: var(--amber-soft); }
-    .status-label.alert { color: #9e3935; background: var(--red-soft); }
-    .empty-state { display: none; padding: 30px 18px; color: var(--muted); font-size: 12px; text-align: center; }
-    .panel-foot { padding: 11px 16px; border-top: 1px solid var(--line); color: #76817d; background: #fbfcfa; font-size: 10px; line-height: 1.6; }
-    .panel-foot strong { color: #655222; font-weight: 600; }
-    .panel-foot #source-status { display: block; white-space: pre-line; }
-    .panel-foot #source-status[data-quality="problem"] { color: #8a5a0b; }
-    .bridge-section { border-top: 1px solid var(--line); }
-    .bridge-section h3 { margin: 0; padding: 11px 16px 7px; font-size: 12px; font-weight: 700; }
-    .bridge-reference { width: 100%; padding: 11px 16px; display: grid; grid-template-columns: 24px minmax(0, 1fr) auto; gap: 9px; align-items: start; border: 0; border-bottom: 1px solid #edf0ec; background: white; text-align: left; cursor: pointer; }
-    .bridge-reference:hover, .bridge-reference:focus-visible { outline: none; background: #f6f9f6; }
-    .bridge-icon { width: 22px; height: 22px; display: grid; place-items: center; border-radius: 5px; color: #176e62; background: #e8f3ef; }
-    .bridge-icon .material { font-size: 16px; }
-    .bridge-name { display: block; font-size: 11px; font-weight: 600; }
-    .bridge-place { display: block; margin-top: 2px; color: var(--muted); font-size: 9px; line-height: 1.45; }
-    .bridge-reading { color: #176e62; font-size: 10px; font-weight: 600; text-align: right; white-space: nowrap; }
-    .bridge-reading.unmonitored { color: #7a7263; font-weight: 500; white-space: normal; }
-    .bridge-pin { width: 23px; height: 23px; display: grid; place-items: center; border: 2px solid #fff; border-radius: 50%; color: #fff; background: #176e62; box-shadow: 0 2px 7px rgba(18,38,34,.4); }
-    .bridge-pin .material { font-size: 14px; }
-    .material { font-family: "Material Symbols Outlined"; font-weight: normal; font-style: normal; font-size: 20px; line-height: 1; display: inline-block; white-space: nowrap; direction: ltr; -webkit-font-feature-settings: "liga"; -webkit-font-smoothing: antialiased; font-feature-settings: "liga"; }
-    .station-pin { width: 22px; height: 22px; border: 3px solid #fff; border-radius: 50%; background: var(--green); box-shadow: 0 2px 7px rgba(18,38,34,.35), 0 0 0 1px rgba(25,52,44,.16); }
-    .station-pin.watch { background: var(--amber); }
-    .station-pin.alert { background: var(--red); }
-    .leaflet-popup-content-wrapper { border-radius: 5px; }
-    .popup-title { margin-bottom: 3px; font-family: "IBM Plex Sans Thai", sans-serif; font-size: 13px; font-weight: 600; }
-    .popup-detail { color: #66716c; font-family: "IBM Plex Sans Thai", sans-serif; font-size: 11px; }
-    .leaflet-control-zoom a { color: #263938 !important; }
-    @media (max-width: 900px) {
-      .workspace { grid-template-columns: minmax(0, 1fr) 320px; }
-      .map-wrap { min-height: 550px; }
+    [hidden] { display: none !important; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font-family: "IBM Plex Sans Thai", system-ui, sans-serif; font-size: 16px; line-height: 1.6; }
+    button { font: inherit; color: inherit; }
+    a { color: var(--brand); }
+    .icon { font-family: "Material Symbols Rounded"; font-weight: normal; font-style: normal; font-size: 24px; line-height: 1; display: inline-block; white-space: nowrap; direction: ltr; font-feature-settings: "liga"; -webkit-font-smoothing: antialiased; user-select: none; }
+    .num { font-variant-numeric: tabular-nums; }
+    .page { width: 100%; max-width: 960px; margin: 0 auto; padding: 0 16px 40px; }
+
+    /* Header */
+    header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 20px 0 16px; }
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .logo { width: 44px; height: 44px; flex: none; display: grid; place-items: center; border-radius: 14px; color: #fff; background: linear-gradient(140deg, #2bb5c8, #0b5f73); }
+    h1 { margin: 0; font-size: 20px; line-height: 1.3; }
+    .sub { color: var(--muted); font-size: 13px; }
+    .updated { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--muted); font-size: 13px; white-space: nowrap; }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--normal); }
+    .updated[data-state="stale"] .dot { background: var(--watch); }
+    .updated[data-state="error"] .dot { background: var(--alert); }
+
+    .card { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); }
+
+    /* Main status */
+    .status { --tone: var(--muted); --tone-bg: var(--soft); overflow: hidden; margin-bottom: 16px; }
+    .status.normal { --tone: var(--normal); --tone-bg: var(--normal-bg); }
+    .status.watch { --tone: var(--watch); --tone-bg: var(--watch-bg); }
+    .status.alert { --tone: var(--alert); --tone-bg: var(--alert-bg); }
+    .status-top { display: flex; align-items: center; gap: 14px; padding: 20px 24px; color: var(--tone); background: var(--tone-bg); }
+    .status-top .icon { font-size: 40px; }
+    .status-word { font-size: clamp(26px, 6vw, 34px); font-weight: 700; line-height: 1.15; }
+    .status-reason { color: var(--ink); font-size: 15px; }
+    .status-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; padding: 24px; }
+    .level-label { color: var(--muted); font-size: 14px; }
+    .level { display: flex; align-items: baseline; gap: 8px; }
+    .level b { font-size: clamp(52px, 13vw, 76px); line-height: 1; letter-spacing: -.02em; }
+    .level span { color: var(--muted); font-size: 18px; }
+    .compare { margin-top: 14px; }
+    .compare-bar { position: relative; height: 14px; border-radius: 999px; background: var(--soft); border: 1px solid var(--line); }
+    .compare-fill { position: absolute; inset: 0 auto 0 0; width: 0; border-radius: inherit; background: var(--tone); transition: width .8s ease; }
+    .compare-bank { position: absolute; top: -6px; bottom: -6px; width: 3px; border-radius: 2px; background: var(--ink); }
+    .compare-text { display: flex; justify-content: space-between; margin-top: 8px; color: var(--muted); font-size: 13px; }
+    .compare-text strong { color: var(--tone); }
+    .advice h3 { margin: 0 0 8px; font-size: 16px; }
+    .advice ul { margin: 0; padding: 0; list-style: none; }
+    .advice li { display: flex; gap: 10px; padding: 7px 0; border-bottom: 1px dashed var(--line); font-size: 15px; }
+    .advice li:last-child { border-bottom: 0; }
+    .advice li .icon { flex: none; color: var(--tone); font-size: 22px; }
+
+    /* Facts */
+    .facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+    .fact { padding: 16px 18px; }
+    .fact-label { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 14px; }
+    .fact-label .icon { color: var(--brand); font-size: 20px; }
+    .fact-value { margin-top: 4px; font-size: 22px; font-weight: 700; line-height: 1.25; }
+    .fact-value small { color: var(--muted); font-size: 14px; font-weight: 500; }
+    .fact-value.text { font-size: 16px; }
+
+    /* Notifications */
+    .notify { display: flex; align-items: center; gap: 16px; padding: 18px 20px; margin-bottom: 16px; }
+    .notify-icon { width: 48px; height: 48px; flex: none; display: grid; place-items: center; border-radius: 14px; color: var(--brand); background: var(--soft); }
+    .notify-text { flex: 1; min-width: 0; }
+    .notify-text strong { display: block; font-size: 16px; }
+    .notify-text span { color: var(--muted); font-size: 14px; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 46px; padding: 0 18px; border: 0; border-radius: 14px; color: #fff; background: var(--brand); font-weight: 600; white-space: nowrap; cursor: pointer; }
+    .btn:hover { filter: brightness(1.08); }
+    .btn.off { color: var(--ink); background: var(--soft); border: 1px solid var(--line); }
+    .btn:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+
+    /* Map */
+    .section-title { margin: 24px 4px 10px; font-size: 18px; }
+    .map-card { position: relative; overflow: hidden; height: 420px; }
+    #map { position: absolute; inset: 0; z-index: 1; background: var(--soft); }
+    .legend { position: absolute; left: 12px; bottom: 12px; z-index: 500; display: flex; flex-wrap: wrap; gap: 4px 12px; padding: 7px 12px; border-radius: 12px; background: rgba(255, 255, 255, .92); color: #12202e; font-size: 13px; box-shadow: 0 2px 10px rgba(0, 0, 0, .15); }
+    .legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .legend i { width: 11px; height: 11px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .2); }
+    .map-error { position: absolute; inset: 0; z-index: 2; display: none; place-items: center; padding: 24px; color: var(--muted); text-align: center; }
+    .map-error.visible { display: grid; }
+    .leaflet-container { font-family: inherit; }
+    .leaflet-bar { border-radius: 12px !important; overflow: hidden; }
+    .leaflet-popup-content-wrapper { border-radius: 14px; }
+    .popup-title { font-size: 15px; font-weight: 700; color: #12202e; }
+    .popup-detail { color: #5a6979; font-size: 13px; line-height: 1.55; }
+    .pin { width: 24px; height: 24px; border: 3px solid #fff; border-radius: 50%; box-shadow: 0 3px 10px rgba(0, 0, 0, .35); }
+    .pin.bridge { display: grid; place-items: center; border-radius: 8px; color: #fff; background: #0b6f84; }
+    .pin.bridge .icon { font-size: 15px; }
+
+    /* Places list */
+    .places { overflow: hidden; }
+    .place { width: 100%; display: flex; align-items: center; gap: 14px; padding: 14px 18px; border: 0; border-bottom: 1px solid var(--line); background: transparent; text-align: left; cursor: pointer; }
+    .place:last-child { border-bottom: 0; }
+    .place:hover { background: var(--soft); }
+    .place:focus-visible { outline: 3px solid var(--brand); outline-offset: -3px; }
+    .place-icon { width: 40px; height: 40px; flex: none; display: grid; place-items: center; border-radius: 12px; color: var(--brand); background: var(--soft); }
+    .place-main { flex: 1; min-width: 0; }
+    .place-name { display: block; font-weight: 600; }
+    .place-sub { display: block; color: var(--muted); font-size: 13px; }
+    .place-value { font-weight: 700; white-space: nowrap; }
+    .place-value.none { color: var(--muted); font-size: 13px; font-weight: 500; }
+
+    .source { margin-top: 16px; padding: 14px 18px; color: var(--muted); font-size: 13px; white-space: pre-line; }
+    .source.problem { color: var(--watch); }
+    footer { margin-top: 20px; color: var(--muted); font-size: 13px; text-align: center; }
+
+    /* In-page notification */
+    .toast { position: fixed; left: 50%; bottom: 20px; z-index: 1000; display: flex; gap: 12px; align-items: flex-start; width: min(460px, calc(100% - 32px)); padding: 14px 16px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); box-shadow: 0 12px 40px rgba(0, 0, 0, .25); transform: translate(-50%, 140%); transition: transform .35s ease; }
+    .toast.show { transform: translate(-50%, 0); }
+    .toast .icon { color: var(--brand); }
+    .toast strong { display: block; }
+    .toast p { margin: 2px 0 0; color: var(--muted); font-size: 14px; }
+    .toast button { margin-left: auto; padding: 0 4px; border: 0; background: none; color: var(--muted); cursor: pointer; }
+
+    .header-actions { display: flex; align-items: center; gap: 8px; }
+    .icon-btn { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink); font-size: 13px; cursor: pointer; }
+    .icon-btn .icon { font-size: 18px; color: var(--brand); }
+    .icon-btn:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+
+    /* History chart */
+    .chart-card { padding: 18px 20px 14px; }
+    .chart-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; }
+    .chart-title { font-size: 16px; font-weight: 700; }
+    .chart-summary { margin-top: 2px; color: var(--muted); font-size: 14px; }
+    .chart-summary strong { color: var(--ink); }
+    .chips { display: flex; gap: 6px; }
+    .chip-btn { height: 32px; padding: 0 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--muted); font-size: 13px; cursor: pointer; }
+    .chip-btn[aria-pressed="true"] { border-color: var(--brand); color: var(--brand); background: var(--soft); font-weight: 600; }
+    .chip-btn:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+    .chart-box { position: relative; height: 240px; margin-top: 10px; touch-action: pan-y; }
+    .chart-box svg { display: block; width: 100%; height: 100%; overflow: visible; }
+    .chart-box .grid { stroke: var(--line); stroke-width: 1; }
+    .chart-box .axis-text { fill: var(--muted); font-size: 11px; font-family: inherit; }
+    .chart-box .bank-line { stroke: var(--ink); stroke-width: 1.5; stroke-dasharray: 5 4; opacity: .65; }
+    .chart-box .bank-text { fill: var(--ink); font-size: 11px; font-weight: 600; font-family: inherit; }
+    .chart-box .series { fill: none; stroke: var(--brand); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+    .chart-box .area { fill: var(--brand); opacity: .08; }
+    .chart-box .end-dot { fill: var(--brand); stroke: var(--surface); stroke-width: 2; }
+    .chart-box .end-text { fill: var(--ink); font-size: 12px; font-weight: 700; font-family: inherit; }
+    .chart-box .cross { stroke: var(--muted); stroke-width: 1; }
+    .chart-box .hover-dot { fill: var(--brand); stroke: var(--surface); stroke-width: 2; }
+    .chart-tip { position: absolute; top: 0; z-index: 3; padding: 6px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); box-shadow: var(--shadow); font-size: 13px; line-height: 1.4; white-space: nowrap; pointer-events: none; display: none; }
+    .chart-tip b { font-size: 15px; }
+    .chart-tip span { color: var(--muted); }
+    .chart-empty { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); font-size: 14px; text-align: center; padding: 0 16px; }
+    .chart-table { margin-top: 8px; font-size: 13px; }
+    .chart-table summary { color: var(--brand); cursor: pointer; }
+    .chart-table table { width: 100%; margin-top: 8px; border-collapse: collapse; }
+    .chart-table th, .chart-table td { padding: 5px 8px; border-bottom: 1px solid var(--line); text-align: left; }
+    .chart-table td:last-child, .chart-table th:last-child { text-align: right; }
+    .chart-table .scroll { max-height: 260px; overflow: auto; }
+    .noscript { margin: 16px 0; padding: 14px 18px; border-radius: 14px; background: var(--watch-bg); color: var(--ink); }
+
+    @media (max-width: 720px) {
+      header { flex-wrap: wrap; }
+      .chart-card { padding: 16px 14px 12px; }
+      .chart-box { height: 210px; }
+      .status-top { padding: 16px 18px; }
+      .status-body { grid-template-columns: 1fr; padding: 18px; gap: 20px; }
+      .facts { grid-template-columns: 1fr 1fr; }
+      .facts .fact:last-child { grid-column: 1 / -1; }
+      .notify { flex-wrap: wrap; }
+      .notify .btn { width: 100%; }
+      .map-card { height: 360px; }
     }
-    @media (max-width: 700px) {
-      .topline { padding: 0 14px; }
-      .header { min-height: 76px; padding: 12px 15px; }
-      .brand-mark { width: 40px; height: 40px; }
-      h1 { font-size: 17px; }
-      .eyebrow { font-size: 10px; }
-      .updated { display: none; }
-      .prototype-pill { padding: 6px 8px; font-size: 10px; }
-      main { padding: 0 12px 16px; }
-      .summary { margin-bottom: 10px; }
-      .summary-item { min-height: 78px; padding: 8px 4px; gap: 3px; flex-direction: column; justify-content: center; text-align: center; }
-      .summary-icon { width: 27px; height: 27px; border-radius: 8px; }
-      .summary-icon .material { font-size: 17px; }
-      .summary-label { min-height: 20px; display: flex; align-items: center; justify-content: center; font-size: 8px; line-height: 1.2; }
-      .summary-value { font-size: 16px; }
-      .summary-value small { font-size: 9px; }
-      .workspace { display: flex; flex-direction: column; overflow: visible; }
-      .map-wrap { min-height: 0; height: 52vh; max-height: 490px; }
-      .side-panel { border-top: 1px solid var(--line); border-left: 0; }
-      .station-list { max-height: 360px; }
-      .map-legend { bottom: 25px; gap: 8px; padding: 8px 9px; }
-      .map-note { display: none; }
-    }
-    @media (max-width: 390px) {
-      .prototype-pill { max-width: 108px; white-space: normal; line-height: 1.2; }
-      .summary-item { gap: 5px; }
-      .summary-icon { width: 26px; height: 26px; }
-      .summary-label { font-size: 8px; }
-    }
-    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+    @media (prefers-reduced-motion: reduce) { * { transition-duration: .01ms !important; } }
   </style>
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..24,400,0,0" rel="stylesheet">
 </head>
 <body>
-  <div class="topline">
-    <div class="topline-label"><span class="live-dot"></span><span>ศูนย์ติดตามสถานการณ์น้ำชุมชน</span></div>
-    <span>อำเภอบ้านโป่ง · จังหวัดราชบุรี</span>
+  <div class="page">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"><span class="icon">water</span></div>
+        <div>
+          <h1>ระดับน้ำบ้านโป่ง</h1>
+          <div class="sub">แม่น้ำแม่กลอง · อ.บ้านโป่ง จ.ราชบุรี</div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="updated" id="updated" data-state="loading" role="status" aria-live="polite"><span class="dot"></span><span id="updated-text">กำลังโหลด...</span></div>
+        <button class="icon-btn" type="button" id="share-btn" aria-label="แชร์ลิงก์หน้านี้"><span class="icon">share</span>แชร์</button>
+      </div>
+    </header>
+    <noscript><div class="noscript">หน้านี้ต้องเปิด JavaScript เพื่อแสดงข้อมูลระดับน้ำ หากเปิดจากแอป LINE ให้กด ⋮ แล้วเลือก "เปิดในเบราว์เซอร์"</div></noscript>
+
+    <section class="card status" id="status" aria-live="polite">
+      <div class="status-top">
+        <span class="icon" id="status-icon">hourglass_top</span>
+        <div>
+          <div class="status-word" id="status-word">กำลังโหลด</div>
+          <div class="status-reason" id="status-reason">กำลังดึงข้อมูลจากกรมชลประทาน</div>
+        </div>
+      </div>
+      <div class="status-body">
+        <div>
+          <div class="level-label" id="level-label">ระดับน้ำที่สะพานค่ายหลวง (K.55A)</div>
+          <div class="level"><b class="num" id="level">--</b><span>เมตร</span></div>
+          <div class="compare" id="compare" hidden>
+            <div class="compare-bar"><div class="compare-fill" id="compare-fill"></div><div class="compare-bank" id="compare-bank"></div></div>
+            <div class="compare-text"><span>ขีดดำ = ระดับตลิ่ง <span id="bank-inline"></span> ม.</span><strong id="compare-diff"></strong></div>
+          </div>
+        </div>
+        <div class="advice">
+          <h3>ควรทำอย่างไร</h3>
+          <ul id="advice"><li><span class="icon">hourglass_top</span>รอข้อมูลสักครู่</li></ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="facts" aria-label="ข้อมูลเพิ่มเติม">
+      <div class="card fact"><div class="fact-label"><span class="icon">waves</span>น้ำไหลผ่าน</div><div class="fact-value num"><span id="flow">--</span> <small>ลบ.ม./วินาที</small></div></div>
+      <div class="card fact"><div class="fact-label"><span class="icon">speed</span>เทียบความจุลำน้ำ</div><div class="fact-value num"><span id="capacity">--</span> <small>%</small></div></div>
+      <div class="card fact"><div class="fact-label"><span class="icon">schedule</span>เวลาที่วัด</div><div class="fact-value text" id="measured">--</div></div>
+    </section>
+
+    <section class="card chart-card" aria-labelledby="chart-title">
+      <div class="chart-head">
+        <div>
+          <div class="chart-title" id="chart-title">ระดับน้ำย้อนหลัง 48 ชั่วโมง</div>
+          <div class="chart-summary" id="chart-summary">กำลังโหลดกราฟ...</div>
+        </div>
+        <div class="chips" id="chart-chips" role="group" aria-label="เลือกสถานี"></div>
+      </div>
+      <div class="chart-box" id="chart-box">
+        <div class="chart-empty" id="chart-empty">กำลังโหลดกราฟ...</div>
+        <div class="chart-tip" id="chart-tip"></div>
+      </div>
+      <details class="chart-table" id="chart-table">
+        <summary>ดูเป็นตาราง</summary>
+        <div class="scroll"><table><thead><tr><th>เวลา</th><th>ระดับน้ำ (ม.)</th></tr></thead><tbody id="chart-rows"></tbody></table></div>
+      </details>
+    </section>
+
+    <section class="card notify" aria-label="การแจ้งเตือน">
+      <div class="notify-icon"><span class="icon" id="notify-icon">notifications</span></div>
+      <div class="notify-text">
+        <strong>แจ้งเตือนระดับน้ำทุก 30 นาที</strong>
+        <span id="notify-status">เปิดไว้แล้วจะแจ้งสถานะน้ำทุก 30 นาที และแจ้งทันทีเมื่อสถานการณ์แย่ลง (ต้องเปิดหน้านี้ค้างไว้)</span>
+      </div>
+      <button class="btn" type="button" id="notify-btn"><span class="icon">notifications_active</span><span id="notify-btn-text">เปิดการแจ้งเตือน</span></button>
+    </section>
+
+    <h2 class="section-title">แผนที่</h2>
+    <section class="card map-card">
+      <div id="map" role="application" aria-label="แผนที่อำเภอบ้านโป่ง"></div>
+      <div class="map-error" id="map-error">โหลดแผนที่ไม่ได้ กรุณาตรวจสอบอินเทอร์เน็ต</div>
+      <div class="legend" aria-label="คำอธิบายสัญลักษณ์">
+        <span><i style="background:#15895a"></i>ปกติ</span>
+        <span><i style="background:#b87300"></i>เฝ้าระวัง</span>
+        <span><i style="background:#cc3a32"></i>อันตราย</span>
+        <span><i style="background:#0b6f84;border-radius:4px"></i>สะพาน</span>
+      </div>
+    </section>
+
+    <h2 class="section-title">จุดที่ติดตาม</h2>
+    <section class="card places" id="places"></section>
+
+    <div class="card source" id="source">กำลังโหลดข้อมูล</div>
+    <footer>ข้อมูลจาก <a href="https://swoc.rid.go.th/" target="_blank" rel="noreferrer">กรมชลประทาน (RID SWOC)</a> และ <a href="https://www.thaiwater.net/" target="_blank" rel="noreferrer">ThaiWater (สสน.)</a> · ใช้ติดตามเบื้องต้น โปรดฟังประกาศทางการ · สายด่วน ปภ. 1784</footer>
   </div>
-  <header class="header">
-    <div class="brand">
-      <div class="brand-mark"><span class="material">water</span></div>
-      <div>
-        <div class="eyebrow">ระบบเฝ้าระวังระดับน้ำ</div>
-        <h1>แผนที่สถานการณ์น้ำ บ้านโป่ง</h1>
-      </div>
-    </div>
-    <div class="header-meta">
-      <div class="updated">ตรวจข้อมูลจาก RID ล่าสุด<br><strong id="updated-time">กำลังโหลด...</strong></div>
-      <div class="prototype-pill source-pill"><span class="material">sensors</span>ข้อมูล RID</div>
-    </div>
-  </header>
-  <main>
-    <section class="summary" aria-label="สรุปข้อมูลน้ำอำเภอบ้านโป่ง">
-      <div class="summary-item">
-        <div class="summary-icon"><span class="material">sensors</span></div>
-        <div><div class="summary-label">สถานี RID บ้านโป่ง</div><div class="summary-value"><span id="summary-total">0</span> <small>จุด</small></div></div>
-      </div>
-      <div class="summary-item warning">
-        <div class="summary-icon"><span class="material">warning</span></div>
-        <div><div class="summary-label">ระดับน้ำที่วัดได้</div><div class="summary-value"><span id="summary-level">--</span> <small>ม.</small></div></div>
-      </div>
-      <div class="summary-item alert">
-        <div class="summary-icon"><span class="material">error</span></div>
-        <div><div class="summary-label">อัตราการไหล Q</div><div class="summary-value"><span id="summary-flow">--</span> <small>m³/s</small></div></div>
-      </div>
-      <div class="summary-item normal">
-        <div class="summary-icon"><span class="material">check_circle</span></div>
-        <div><div class="summary-label">สะพานที่แสดง</div><div class="summary-value"><span id="summary-bridges">0</span> <small>จุด</small></div></div>
-      </div>
-    </section>
-    <section class="workspace" aria-label="แผนที่และสถานีเฝ้าระวัง">
-      <div class="map-wrap">
-        <div id="map" role="application" aria-label="แผนที่อำเภอบ้านโป่ง"></div>
-        <div class="map-error" id="map-error">ไม่สามารถโหลดแผนที่ได้ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต<br>รายการสถานีและสะพานยังดูได้จากแผงด้านข้าง</div>
-        <div class="map-chip"><span class="material">near_me</span>อำเภอบ้านโป่ง · ราชบุรี</div>
-        <div class="map-legend" aria-label="คำอธิบายสัญลักษณ์">
-          <span class="legend-entry"><span class="legend-dot"></span>ปกติ</span>
-          <span class="legend-entry"><span class="legend-dot watch"></span>เฝ้าระวัง</span>
-          <span class="legend-entry"><span class="legend-dot alert"></span>เตือนภัย</span>
-          <span class="legend-entry"><span class="legend-dot" style="background:#176e62"></span>สะพานอ้างอิง ไม่มีเครื่องวัด</span>
-        </div>
-        <div class="map-note">ภาพดาวเทียม © Esri · ขอบเขต <a href="https://www.geoboundaries.org/" target="_blank" rel="noreferrer">geoBoundaries</a> (2019)</div>
-      </div>
-      <aside class="side-panel">
-        <div class="panel-head">
-          <div class="panel-title-row"><h2>สถานีวัดน้ำบ้านโป่ง</h2><span class="count" id="visible-count">0</span></div>
-          <div class="panel-caption">ค่าระดับน้ำและ Q จากกรมชลประทาน RID SWOC</div>
-          <label class="search"><span class="material">search</span><input id="station-search" type="search" placeholder="ค้นหาสถานี..." aria-label="ค้นหาสถานี"></label>
-        </div>
-        <div class="filters" role="group" aria-label="กรองสถานีตามสถานะ">
-          <button class="filter-btn" type="button" data-filter="all" aria-pressed="true">ทั้งหมด</button>
-          <button class="filter-btn" type="button" data-filter="alert" aria-pressed="false">เตือนภัย</button>
-          <button class="filter-btn" type="button" data-filter="watch" aria-pressed="false">เฝ้าระวัง</button>
-          <button class="filter-btn" type="button" data-filter="normal" aria-pressed="false">ปกติ</button>
-        </div>
-        <div class="station-list" id="station-list"></div>
-        <div class="empty-state" id="empty-state">กำลังรอข้อมูลสถานีจากกรมชลประทาน</div>
-        <div class="bridge-section"><h3>สะพานข้ามแม่น้ำแม่กลอง</h3><div id="bridge-list"></div></div>
-        <div class="panel-foot"><strong>ต้นทางสถานี: กรมชลประทาน SWOC</strong><span id="source-status">กำลังโหลดข้อมูล</span><br>จุดอ้างอิงสะพานจาก OSM/เทศบาล · ไม่มีระดับน้ำหรือ Q เว้นแต่ระบุสถานี RID</div>
-      </aside>
-    </section>
-  </main>
+
+  <div class="toast" id="toast" role="alert">
+    <span class="icon">notifications</span>
+    <div><strong id="toast-title"></strong><p id="toast-body"></p></div>
+    <button type="button" id="toast-close" aria-label="ปิด"><span class="icon">close</span></button>
+  </div>
+
+  <!-- If unpkg is blocked or down, the map loader below retries from cdnjs. -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script>
-    let stations = [];
-    const stationList = document.querySelector("#station-list");
-    const searchInput = document.querySelector("#station-search");
-    const emptyState = document.querySelector("#empty-state");
-    const visibleCount = document.querySelector("#visible-count");
-    const sourceStatus = document.querySelector("#source-status");
-    const bridgeList = document.querySelector("#bridge-list");
-    let activeFilter = "all";
-    let map;
-    let districtBounds;
-    let bridges = [];
-    const markers = new Map();
-    const bridgeMarkers = new Map();
+    const PRIMARY_STATION = "K.55A";
+    // RID posts hourly and ThaiWater mirrors K.55A ~2 h late, so only readings over 3 h old are "not current".
+    const STALE_MINUTES = 180;
+    const REFRESH_MS = 5 * 60 * 1000;
+    const HISTORY_HOURS = 48;
+    // ThaiWater allows this site's origin (CORS), so visitors get live readings without waiting for the
+    // GitHub Actions snapshot, which GitHub's scheduler often runs hours late.
+    const THAIWATER = "https://api-v3.thaiwater.net/api/v1/thaiwater30/public";
+    const LIVE_URL = `${THAIWATER}/waterlevel_load?province_code=70`;
+    const DISTRICT = "บ้านโป่ง";
+    // Keep K.55A on its RID coordinates whichever source supplied the reading, so the map doesn't jump.
+    const PINNED_POSITIONS = { "K.55A": { name: "สะพานค่ายหลวง", latitude: 13.818668365478516, longitude: 99.86474609375 } };
+    const NOTIFY_EVERY_MS = 30 * 60 * 1000;
+    const STATUS = {
+      normal: { word: "ปกติ", icon: "check_circle", pin: "#15895a", rank: 0 },
+      watch: { word: "เฝ้าระวัง", icon: "warning", pin: "#b87300", rank: 1 },
+      alert: { word: "อันตราย · น้ำล้นตลิ่ง", icon: "flood", pin: "#cc3a32", rank: 2 }
+    };
+    const ADVICE = {
+      normal: [["check", "ใช้ชีวิตได้ตามปกติ"], ["visibility", "ติดตามข้อมูลเป็นระยะ"]],
+      watch: [["inventory_2", "เตรียมยกของสำคัญขึ้นที่สูง"], ["battery_charging_full", "ชาร์จโทรศัพท์ เตรียมไฟฉายและน้ำดื่ม"], ["campaign", "ติดตามประกาศจากเทศบาลและอำเภอ"]],
+      alert: [["move_up", "ขนย้ายของและสัตว์เลี้ยงขึ้นที่สูงทันที"], ["do_not_step", "หลีกเลี่ยงริมตลิ่งและถนนที่น้ำท่วม"], ["electrical_services", "ระวังไฟฟ้ารั่ว ตัดไฟชั้นล่างถ้าน้ำเข้าบ้าน"], ["call", "ขอความช่วยเหลือ โทร 1784 (ปภ.)"]]
+    };
 
-    function formatTime(value) {
-      if (!value) return "ไม่พบเวลา";
-      return new Intl.DateTimeFormat("th-TH", {
-        dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Bangkok"
-      }).format(new Date(value));
-    }
+    const $ = (selector) => document.querySelector(selector);
+    const numberFormat = new Intl.NumberFormat("th-TH", { maximumFractionDigits: 0 });
+    let snapshot = null;
+    let snapshotError = null;
+    let liveStations = [];
+    let liveLoadedAt = null;
+    let liveError = null;
+    let stations = [];
+    let bridges = [];
+    let map;
+    const markers = new Map();
+
+    // localStorage can throw (private mode, blocked storage); notifications still work without it.
+    const store = {
+      get(key) { try { return localStorage.getItem(key); } catch { return null; } },
+      set(key, value) { try { localStorage.setItem(key, value); } catch { /* ignore */ } }
+    };
 
     function escapeHTML(value) {
-      return String(value ?? "").replace(/[&<>"']/g, (character) => ({
-        "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"
-      })[character]);
+      return String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" })[c]);
     }
 
-    function formatDischarge(value) {
-      return value == null ? "ไม่มีรายงาน" : `${value.toFixed(1)} m³/s`;
+    function formatTime(value) {
+      const date = new Date(value);
+      if (!value || Number.isNaN(date.getTime())) return "ไม่ทราบเวลา";
+      return new Intl.DateTimeFormat("th-TH", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Bangkok" }).format(date);
     }
 
-    function updateSummary() {
-      document.querySelector("#summary-total").textContent = stations.length;
-      const localGauge = stations.find((station) => station.stationCode === "K.55A");
-      document.querySelector("#summary-level").textContent = localGauge ? localGauge.waterLevelMeters.toFixed(2) : "--";
-      document.querySelector("#summary-flow").textContent = localGauge?.dischargeCubicMetersPerSecond == null
-        ? "--"
-        : new Intl.NumberFormat("th-TH", { maximumFractionDigits: 0 }).format(localGauge.dischargeCubicMetersPerSecond);
-      document.querySelector("#summary-bridges").textContent = bridges.length;
+    function clock(value) {
+      return new Intl.DateTimeFormat("th-TH", { timeStyle: "short", timeZone: "Asia/Bangkok" }).format(new Date(value));
     }
 
-    function renderBridgeReferences() {
-      const query = searchInput.value.trim().toLocaleLowerCase("th-TH");
-      const visibleBridges = bridges.filter((bridge) => `${bridge.name} ${bridge.road} ${bridge.river}`.toLocaleLowerCase("th-TH").includes(query));
-      bridgeList.replaceChildren(...visibleBridges.map((bridge) => {
-        const station = stations.find((item) => item.stationCode === bridge.stationCode);
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "bridge-reference";
-        const flowText = station
-          ? `RID Q ${formatDischarge(station.dischargeCubicMetersPerSecond)}`
-          : "ไม่มีเครื่องวัด RID";
-        button.innerHTML = `<span class="bridge-icon"><span class="material">${station ? "sensors" : "bridge"}</span></span><span><span class="bridge-name">${escapeHTML(bridge.name)}</span><span class="bridge-place">${escapeHTML(bridge.road)} · ${escapeHTML(bridge.river)}<br>${escapeHTML(bridge.source)}${station ? `<br>ระดับน้ำ ${station.waterLevelMeters.toFixed(2)} ม. · วัดเมื่อ ${escapeHTML(station.measuredAt.raw)}` : ""}</span></span><span class="bridge-reading ${station ? "" : "unmonitored"}">${flowText}</span>`;
-        button.addEventListener("click", () => {
-          const marker = station ? markers.get(station.id) : bridgeMarkers.get(bridge.id);
-          if (map && marker) {
-            map.setView([bridge.latitude, bridge.longitude], 14, { animate: true });
-            marker.openPopup();
-          }
-        });
-        return button;
-      }));
+    function relativeTime(value) {
+      const minutes = Math.round((Date.now() - new Date(value).getTime()) / 60000);
+      if (!Number.isFinite(minutes)) return "ไม่ทราบเวลา";
+      if (minutes < 1) return "เมื่อสักครู่";
+      if (minutes < 60) return `${minutes} นาทีที่แล้ว`;
+      if (minutes < 1440) return `${Math.floor(minutes / 60)} ชม.ที่แล้ว`;
+      return `${Math.floor(minutes / 1440)} วันที่แล้ว`;
+    }
 
-      if (map && window.L) {
-        for (const bridge of bridges) {
-          if (bridge.stationCode) continue;
-          let marker = bridgeMarkers.get(bridge.id);
-          const icon = L.divIcon({
-            className: "",
-            html: '<div class="bridge-pin"><span class="material">bridge</span></div>',
-            iconSize: [23, 23],
-            iconAnchor: [11, 11]
-          });
-          const popup = `<div class="popup-title">${escapeHTML(bridge.name)}</div><div class="popup-detail">${escapeHTML(bridge.road)} · ${escapeHTML(bridge.river)}<br>ไม่มีข้อมูลวัดระดับน้ำ/Q จาก RID ณ จุดนี้<br>พิกัด: ${escapeHTML(bridge.coordinateQuality)}<br>ที่มา: <a href="${escapeHTML(bridge.sourceUrl)}" target="_blank" rel="noreferrer">${escapeHTML(bridge.source)}</a></div>`;
-          if (!marker) {
-            marker = L.marker([bridge.latitude, bridge.longitude], { icon }).bindPopup(popup).addTo(map);
-            bridgeMarkers.set(bridge.id, marker);
-          } else {
-            marker.setLatLng([bridge.latitude, bridge.longitude]).setIcon(icon).setPopupContent(popup);
-          }
-        }
+    function measuredMs(station) {
+      const ms = new Date(station?.measuredAt?.iso ?? NaN).getTime();
+      return Number.isFinite(ms) ? ms : null;
+    }
+
+    function isCurrent(station) {
+      const ms = measuredMs(station);
+      if (ms == null) return false;
+      const age = (Date.now() - ms) / 60000;
+      return age >= -5 && age <= STALE_MINUTES;
+    }
+
+    function classify(station) {
+      const hasBank = station.bankLevelMeters != null;
+      const diff = hasBank ? station.waterLevelMeters - station.bankLevelMeters : null;
+      const timeReliable = isCurrent(station);
+      // Above-bank stays "alert" even with a doubtful timestamp: missing a real flood is worse than a false alarm.
+      if (diff != null && diff >= 0) return { status: "alert", reason: `น้ำสูงกว่าตลิ่ง ${diff.toFixed(2)} เมตร` };
+      if (!timeReliable) return { status: "watch", reason: "ข้อมูลยังไม่อัปเดต ยืนยันสถานการณ์ไม่ได้" };
+      if (diff != null && diff > -1) return { status: "watch", reason: `น้ำใกล้ถึงตลิ่ง (ต่ำกว่าอีก ${Math.abs(diff).toFixed(2)} เมตร)` };
+      if (station.ridStatusCode !== 1 && station.ridStatusCode != null) return { status: "watch", reason: station.ridTrend || "กรมชลประทานให้เฝ้าระวัง" };
+      return { status: "normal", reason: diff != null ? `น้ำต่ำกว่าตลิ่ง ${Math.abs(diff).toFixed(2)} เมตร` : (station.ridTrend || "ระดับน้ำปกติ") };
+    }
+
+    function measuredText(station) {
+      return station.measuredAt?.iso ? formatTime(station.measuredAt.iso) : (station.measuredAt?.raw ?? "ไม่ทราบเวลา");
+    }
+
+    function trendText(station) {
+      if (station.previousWaterLevelMeters == null) return "";
+      const change = station.waterLevelMeters - station.previousWaterLevelMeters;
+      if (Math.abs(change) < 0.005) return "ทรงตัว";
+      return change > 0 ? `น้ำขึ้น +${change.toFixed(2)} ม.` : `น้ำลง ${change.toFixed(2)} ม.`;
+    }
+
+    function distanceKm(a, b) {
+      const rad = Math.PI / 180;
+      const x = (b.longitude - a.longitude) * rad * Math.cos((a.latitude + b.latitude) / 2 * rad);
+      const y = (b.latitude - a.latitude) * rad;
+      return Math.hypot(x, y) * 6371;
+    }
+
+    // Readings from nearby gauges for a bridge that has no gauge of its own, nearest first.
+    function nearbyReadings(bridge) {
+      return (bridge.nearbyStationCodes ?? [])
+        .map((code) => stations.find((station) => station.stationCode === code))
+        .filter(Boolean)
+        .map((station) => ({ station, km: distanceKm(bridge, station) }))
+        .sort((a, b) => a.km - b.km);
+    }
+
+    function primaryStation() {
+      return stations.find((s) => s.stationCode === PRIMARY_STATION) ?? stations[0] ?? null;
+    }
+
+    function renderStatus() {
+      const station = primaryStation();
+      if (!station) return;
+      const info = STATUS[station.status];
+      $("#status").className = `card status ${station.status}`;
+      $("#status-icon").textContent = info.icon;
+      $("#status-word").textContent = info.word;
+      $("#status-reason").textContent = station.reason;
+      $("#level-label").textContent = `ระดับน้ำที่${station.name} (${station.stationCode})`;
+      $("#level").textContent = station.waterLevelMeters.toFixed(2);
+      $("#advice").innerHTML = ADVICE[station.status].map(([icon, text]) => `<li><span class="icon">${icon}</span>${escapeHTML(text)}</li>`).join("");
+
+      const compare = $("#compare");
+      if (station.bankLevelMeters != null) {
+        // Scale so the bank sits at ~75% of the bar, with room to show overflow.
+        const scaleTop = Math.max(station.bankLevelMeters / 0.75, station.waterLevelMeters * 1.05);
+        compare.hidden = false;
+        $("#compare-fill").style.width = `${Math.min(100, station.waterLevelMeters / scaleTop * 100)}%`;
+        $("#compare-bank").style.left = `${station.bankLevelMeters / scaleTop * 100}%`;
+        $("#bank-inline").textContent = station.bankLevelMeters.toFixed(2);
+        const diff = station.waterLevelMeters - station.bankLevelMeters;
+        $("#compare-diff").textContent = diff >= 0 ? `เกินตลิ่ง +${diff.toFixed(2)} ม.` : `ต่ำกว่าตลิ่ง ${Math.abs(diff).toFixed(2)} ม.`;
+      } else {
+        compare.hidden = true;
       }
+
+      $("#flow").textContent = station.dischargeCubicMetersPerSecond == null ? "--" : numberFormat.format(station.dischargeCubicMetersPerSecond);
+      $("#capacity").textContent = station.dischargeCapacityPercent == null ? "--" : station.dischargeCapacityPercent.toFixed(0);
+      $("#measured").textContent = measuredText(station);
     }
 
-    function renderStations() {
-      const query = searchInput.value.trim().toLocaleLowerCase("th-TH");
-      const visible = stations.filter((station) => {
-        const matchesStatus = activeFilter === "all" || station.status === activeFilter;
-        const matchesQuery = `${station.name} ${station.place} ${station.stationCode}`.toLocaleLowerCase("th-TH").includes(query);
-        return matchesStatus && matchesQuery;
-      });
-      stationList.replaceChildren(...visible.map((station) => {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "station";
-        button.dataset.stationId = station.id;
-        button.setAttribute("aria-label", `${station.name} ${station.stationCode}, ระดับน้ำ ${station.waterLevelMeters.toFixed(2)} เมตร, อัตราการไหล ${formatDischarge(station.dischargeCubicMetersPerSecond)}, ${station.condition}`);
-        button.innerHTML = `<span class="station-marker ${station.status}"></span><span><span class="station-name">${escapeHTML(station.name)} · ${escapeHTML(station.stationCode)}</span><span class="station-place">${escapeHTML(station.place)}</span><span class="status-label ${station.status}">${escapeHTML(station.condition)}</span></span><span class="station-reading"><span class="reading-value">${station.waterLevelMeters.toFixed(2)}</span><br><span class="reading-unit">เมตร</span><br><span class="reading-unit">Q ${formatDischarge(station.dischargeCubicMetersPerSecond)}</span></span>`;
-        button.addEventListener("click", () => {
-          if (map && markers.has(station.id)) {
-            map.setView([station.latitude, station.longitude], 14, { animate: true });
-            markers.get(station.id).openPopup();
-          }
-        });
-        return button;
-      }));
-      visibleCount.textContent = visible.length;
-      emptyState.textContent = stations.length ? "ไม่พบสถานีที่ตรงกับการค้นหา" : "ยังไม่มีข้อมูลสถานีจากกรมชลประทาน";
-      emptyState.style.display = visible.length ? "none" : "block";
-      updateSummary();
-      renderBridgeReferences();
-      if (map && window.L) {
-        const visibleIds = new Set(visible.map((station) => station.id));
-        for (const station of stations) {
-          let marker = markers.get(station.id);
-          const icon = L.divIcon({
-            className: "",
-            html: `<div class="station-pin ${station.status}"></div>`,
-            iconSize: [22, 22],
-            iconAnchor: [11, 11]
-          });
-          const popup = `<div class="popup-title">${escapeHTML(station.name)} · ${escapeHTML(station.stationCode)}</div><div class="popup-detail">ระดับน้ำ ${station.waterLevelMeters.toFixed(2)} ม. · Q ${formatDischarge(station.dischargeCubicMetersPerSecond)}<br>${escapeHTML(station.condition)}<br>เวลาวัดจาก RID: ${escapeHTML(station.measuredAt.raw)}</div>`;
-          if (!marker) {
-            marker = L.marker([station.latitude, station.longitude], { icon }).bindPopup(popup);
-            markers.set(station.id, marker);
-          } else {
-            marker.setLatLng([station.latitude, station.longitude]).setIcon(icon).setPopupContent(popup);
-          }
-          if (visibleIds.has(station.id) && !map.hasLayer(marker)) marker.addTo(map);
-          if (!visibleIds.has(station.id) && map.hasLayer(marker)) map.removeLayer(marker);
-        }
+    function renderUpdated() {
+      const badge = $("#updated");
+      const source = $("#source");
+      if (!stations.length) {
+        badge.dataset.state = "error";
+        $("#updated-text").textContent = "โหลดข้อมูลไม่สำเร็จ";
+        source.classList.add("problem");
+        source.textContent = "โหลดข้อมูลระดับน้ำไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ตแล้วลองใหม่\nหน้านี้จะลองโหลดใหม่อัตโนมัติทุก 5 นาที";
+        return;
       }
+      const newest = Math.max(...stations.map((station) => measuredMs(station) ?? 0));
+      const current = stations.some(isCurrent);
+      badge.dataset.state = current ? "live" : "stale";
+      $("#updated-text").textContent = newest ? `วัดล่าสุด ${relativeTime(newest)}` : "ไม่ทราบเวลาวัด";
+      source.classList.toggle("problem", !current);
+      source.textContent = [
+        liveLoadedAt ? `ข้อมูลสดจาก ThaiWater โหลดเมื่อ ${clock(liveLoadedAt)} น.` : liveError ? "โหลดข้อมูลสดจาก ThaiWater ไม่ได้ ใช้ข้อมูลสำรองจากระบบอัตโนมัติแทน" : "กำลังโหลดข้อมูลสดจาก ThaiWater...",
+        snapshot ? `ข้อมูลสำรอง (กรมชลประทาน + ThaiWater): ${formatTime(snapshot.checkedAt)}` : snapshotError ? "โหลดไฟล์ข้อมูลสำรองไม่ได้" : "",
+        ...stations.map((station) => `${station.stationCode}: ${measuredText(station)} · ${station.dataSource ?? ""}${isCurrent(station) ? "" : " (ข้อมูลเก่า)"}`),
+        current ? "" : `ไม่มีสถานีที่มีข้อมูลใหม่กว่า ${STALE_MINUTES / 60} ชั่วโมง โปรดตรวจสอบกับประกาศทางการ`
+      ].filter(Boolean).join("\n");
     }
 
-    async function refreshStationData() {
-      try {
-        const response = await fetch(`./water-data.json?check=${Date.now()}`, { cache: "no-store" });
-        if (!response.ok) throw new Error(`โหลดข้อมูล RID ไม่สำเร็จ (${response.status})`);
-        const data = await response.json();
-        if (!Array.isArray(data.stations) || !data.checkedAt) throw new Error("รูปแบบข้อมูล RID ไม่ถูกต้อง");
-
-        const fetchAgeMinutes = Math.round((Date.now() - new Date(data.checkedAt).getTime()) / 60000);
-        const feedFresh = fetchAgeMinutes >= -5 && fetchAgeMinutes <= 20;
-        stations = data.stations.map((station) => {
-          const aboveBank = station.bankLevelMeters != null && station.waterLevelMeters >= station.bankLevelMeters;
-          const timeReliable = feedFresh && station.measuredAt?.quality === "current";
+    function renderPlaces() {
+      const rows = [
+        ...stations.map((station) => ({
+          name: `${station.name} (${station.stationCode})`,
+          sub: [`สถานีวัดน้ำ ${station.agency ?? ""}`.trim(), STATUS[station.status].word, station.reason, trendText(station)].filter(Boolean).join(" · "),
+          icon: "sensors", value: `${station.waterLevelMeters.toFixed(2)} ม.`, lat: station.latitude, lng: station.longitude, key: `s:${station.stationCode}`
+        })),
+        ...bridges.filter((bridge) => !bridge.stationCode).map((bridge) => {
+          const nearest = nearbyReadings(bridge)[0];
           return {
-            ...station,
-            id: station.stationCode,
-            place: [station.river, station.district, station.province].filter(Boolean).join(" · "),
-            status: !timeReliable ? "watch" : aboveBank ? "alert" : station.ridStatusCode === 1 ? "normal" : "watch",
-            condition: !timeReliable
-              ? `${station.ridTrend || "RID ยังไม่ระบุสถานะ"} · เวลา RID ไม่ยืนยัน`
-              : aboveBank
-                ? `สูงกว่าตลิ่ง ${(station.waterLevelMeters - station.bankLevelMeters).toFixed(2)} ม. · RID`
-                : station.ridTrend || "RID ยังไม่ระบุสถานะ"
+            name: bridge.name,
+            sub: nearest
+              ? `ไม่มีเครื่องวัดที่สะพาน · ใช้ค่าจาก ${nearest.station.stationCode} ห่าง ${nearest.km < 0.1 ? "<0.1" : nearest.km.toFixed(1)} กม.`
+              : bridge.road,
+            icon: "conversion_path",
+            value: nearest ? `≈ ${nearest.station.waterLevelMeters.toFixed(2)} ม.` : null,
+            lat: bridge.latitude, lng: bridge.longitude, key: `b:${bridge.id}`
           };
-        }).sort((first, second) => Number(second.district === "บ้านโป่ง") - Number(first.district === "บ้านโป่ง") || first.stationCode.localeCompare(second.stationCode, "en", { numeric: true }));
+        })
+      ];
+      $("#places").replaceChildren(...rows.map((row) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "place";
+        button.innerHTML = `<span class="place-icon"><span class="icon">${row.icon}</span></span><span class="place-main"><span class="place-name">${escapeHTML(row.name)}</span><span class="place-sub">${escapeHTML(row.sub)}</span></span><span class="place-value num ${row.value ? "" : "none"}">${escapeHTML(row.value ?? "ไม่มีเครื่องวัด")}</span>`;
+        button.addEventListener("click", () => {
+          const marker = markers.get(row.key);
+          if (!map || !marker) return;
+          $(".map-card").scrollIntoView({ behavior: "smooth", block: "center" });
+          map.flyTo([row.lat, row.lng], 15, { duration: .8 });
+          map.once("moveend", () => marker.openPopup());
+        });
+        return button;
+      }));
+    }
 
-        document.querySelector("#updated-time").textContent = formatTime(data.checkedAt);
-        bridges = Array.isArray(data.bridges) ? data.bridges : [];
-        updateSummary();
-        const timeProblems = stations.filter((station) => station.measuredAt.quality !== "current");
-        sourceStatus.dataset.quality = timeProblems.length || !feedFresh ? "problem" : "current";
-        sourceStatus.textContent = `ดึงข้อมูล: ${formatTime(data.checkedAt)} (${feedFresh ? "ล่าสุด" : "เก่ากว่า 20 นาที"})\nสถานี RID ในบ้านโป่ง: ${stations.length} จุด · สะพานอ้างอิง ${bridges.length} จุด\nเวลาวัด RID: ${timeProblems.length ? "ไม่สอดคล้อง/ต้องตรวจสอบ" : "อยู่ในช่วงปกติ"}${timeProblems.length ? ` · ${timeProblems[0].measuredAt.raw ?? "ไม่พบเวลา"}` : ""}${data.collectionError ? `\nดึงรอบนี้ไม่สำเร็จ: ${data.collectionError}` : ""}`;
-        renderStations();
-      } catch (error) {
-        sourceStatus.dataset.quality = "problem";
-        sourceStatus.textContent = `${error.message}\nหากมีข้อมูลรอบก่อน จะแสดงค่ารอบก่อนพร้อมเวลาที่ดึงไว้`;
-        if (!stations.length) renderStations();
+    function renderMarkers() {
+      if (!map) return;
+      for (const station of stations) {
+        const key = `s:${station.stationCode}`;
+        const icon = L.divIcon({ className: "", html: `<div class="pin" style="background:${STATUS[station.status].pin}"></div>`, iconSize: [24, 24], iconAnchor: [12, 12], popupAnchor: [0, -12] });
+        const trend = trendText(station);
+        const popup = `<div class="popup-title">${escapeHTML(station.name)} (${escapeHTML(station.stationCode)}) · ${escapeHTML(STATUS[station.status].word)}</div><div class="popup-detail">ระดับน้ำ <b>${station.waterLevelMeters.toFixed(2)} ม.</b>${station.bankLevelMeters != null ? ` · ตลิ่ง ${station.bankLevelMeters.toFixed(2)} ม.` : ""}<br>${escapeHTML(station.reason)}${trend ? ` · ${escapeHTML(trend)}` : ""}${station.dischargeCubicMetersPerSecond != null ? `<br>น้ำไหลผ่าน ${numberFormat.format(station.dischargeCubicMetersPerSecond)} ลบ.ม./วินาที` : ""}<br>วัดเมื่อ ${escapeHTML(measuredText(station))}<br>ที่มา: ${escapeHTML(station.agency ?? station.dataSource ?? "")}</div>`;
+        const marker = markers.get(key);
+        // Gauges can sit metres apart (K.55A and RAJ002), so the more severe status always draws on top.
+        const zIndexOffset = 1000 + STATUS[station.status].rank * 500;
+        if (marker) marker.setLatLng([station.latitude, station.longitude]).setIcon(icon).setPopupContent(popup).setZIndexOffset(zIndexOffset);
+        else markers.set(key, L.marker([station.latitude, station.longitude], { icon, zIndexOffset }).bindPopup(popup).addTo(map));
+      }
+      for (const bridge of bridges) {
+        if (bridge.stationCode) continue;
+        const key = `b:${bridge.id}`;
+        const readings = nearbyReadings(bridge).map(({ station, km }) =>
+          `${escapeHTML(station.stationCode)} ${escapeHTML(station.name)}: <b>${station.waterLevelMeters.toFixed(2)} ม.</b> (${escapeHTML(station.reason)}) · ห่าง ${km < 0.1 ? "&lt;0.1" : km.toFixed(1)} กม.`).join("<br>");
+        const popup = `<div class="popup-title">${escapeHTML(bridge.name)}</div><div class="popup-detail">${escapeHTML(bridge.road)}<br>จุดนี้ไม่มีเครื่องวัดระดับน้ำของตัวเอง${readings ? `<br><br>ค่าจากสถานีใกล้เคียง:<br>${readings}` : ""}${bridge.note ? `<br><br>${escapeHTML(bridge.note)}` : ""}</div>`;
+        const marker = markers.get(key);
+        if (marker) { marker.setPopupContent(popup); continue; }
+        const icon = L.divIcon({ className: "", html: '<div class="pin bridge"><span class="icon">conversion_path</span></div>', iconSize: [26, 26], iconAnchor: [13, 13], popupAnchor: [0, -13] });
+        markers.set(key, L.marker([bridge.latitude, bridge.longitude], { icon }).bindPopup(popup).addTo(map));
       }
     }
 
-    document.querySelectorAll(".filter-btn").forEach((button) => {
-      button.addEventListener("click", () => {
-        activeFilter = button.dataset.filter;
-        document.querySelectorAll(".filter-btn").forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
-        renderStations();
+    async function fetchJSON(url, timeoutMs = 20000) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), timeoutMs);
+      try {
+        const response = await fetch(url, { cache: "no-store", signal: controller.signal });
+        if (!response.ok) throw new Error(`โหลดข้อมูลไม่สำเร็จ (HTTP ${response.status})`);
+        return await response.json();
+      } catch (error) {
+        if (error.name === "AbortError") throw new Error("โหลดข้อมูลนานเกินไป");
+        if (error instanceof SyntaxError) throw new Error("ไฟล์ข้อมูลเสียหาย");
+        throw error;
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+
+    function parseThaiWaterDate(value) {
+      const match = String(value ?? "").match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})/);
+      if (!match) return null;
+      const [, year, month, day, hour, minute] = match.map(Number);
+      // ThaiWater times are Bangkok local (UTC+7) with no zone marker.
+      return new Date(Date.UTC(year, month - 1, day, hour, minute) - 7 * 3600 * 1000);
+    }
+
+    function finiteOrNull(value) {
+      if (value === null || value === undefined || value === "") return null;
+      const number = Number(value);
+      return Number.isFinite(number) ? number : null;
+    }
+
+    // Mirrors toThaiWaterStation() in fetch-rid-data.mjs so live and snapshot stations share one shape.
+    function toThaiWaterStation(row) {
+      const info = row?.station ?? {};
+      const code = info.tele_station_oldcode;
+      if (!code || row.geocode?.amphoe_name?.th !== DISTRICT) return null;
+      const latitude = finiteOrNull(info.tele_station_lat);
+      const longitude = finiteOrNull(info.tele_station_long);
+      const waterLevel = finiteOrNull(row.waterlevel_msl);
+      if (latitude == null || longitude == null || waterLevel == null || waterLevel < -50 || waterLevel > 500) return null;
+      const bank = finiteOrNull(info.min_bank);
+      const measured = parseThaiWaterDate(row.waterlevel_datetime);
+      return {
+        thaiWaterId: info.id,
+        stationCode: code,
+        name: info.tele_station_name?.th ?? code,
+        district: DISTRICT,
+        province: row.geocode?.province_name?.th ?? null,
+        river: row.river_name ?? null,
+        latitude, longitude,
+        waterLevelMeters: waterLevel,
+        previousWaterLevelMeters: finiteOrNull(row.waterlevel_msl_previous),
+        bankLevelMeters: bank,
+        dischargeCubicMetersPerSecond: finiteOrNull(row.discharge),
+        dischargeCapacityPercent: finiteOrNull(row.storage_percent),
+        ridStatusCode: null,
+        ridTrend: null,
+        agency: row.agency?.agency_name?.th?.trim() ?? null,
+        dataSource: "ThaiWater (สด)",
+        measuredAt: { raw: row.waterlevel_datetime ?? null, iso: measured ? measured.toISOString() : null }
+      };
+    }
+
+    // Combine the snapshot with live readings, keeping whichever reading of each gauge is newest.
+    function rebuildStations() {
+      const byCode = new Map();
+      for (const station of snapshot?.stations ?? []) {
+        if (Number.isFinite(station?.waterLevelMeters) && Number.isFinite(station?.latitude) && Number.isFinite(station?.longitude)) byCode.set(station.stationCode, station);
+      }
+      for (const live of liveStations) {
+        const existing = byCode.get(live.stationCode);
+        const pinned = PINNED_POSITIONS[live.stationCode] ?? (existing ? { name: existing.name, latitude: existing.latitude, longitude: existing.longitude } : {});
+        if (!existing || (measuredMs(live) ?? 0) > (measuredMs(existing) ?? 0)) {
+          byCode.set(live.stationCode, { ...live, ...pinned });
+        } else if (existing && !existing.thaiWaterId) {
+          byCode.set(live.stationCode, { ...existing, thaiWaterId: live.thaiWaterId });
+        }
+      }
+      stations = [...byCode.values()]
+        .map((station) => ({ ...station, ...classify(station) }))
+        .sort((a, b) => Number(b.stationCode === PRIMARY_STATION) - Number(a.stationCode === PRIMARY_STATION) || String(a.stationCode).localeCompare(String(b.stationCode)));
+      bridges = Array.isArray(snapshot?.bridges) ? snapshot.bridges : bridges;
+      renderStatus();
+      renderPlaces();
+      renderMarkers();
+      renderUpdated();
+      renderChartChips();
+      if (stations.length) checkNotify();
+    }
+
+    async function refreshSnapshot() {
+      try {
+        const data = await fetchJSON(`./water-data.json?check=${Date.now()}`);
+        if (!Array.isArray(data?.stations) || !data.checkedAt) throw new Error("รูปแบบข้อมูลไม่ถูกต้อง");
+        snapshot = data;
+        snapshotError = null;
+      } catch (error) {
+        snapshotError = error;
+      }
+      rebuildStations();
+    }
+
+    async function refreshLive() {
+      try {
+        const data = await fetchJSON(LIVE_URL, 25000);
+        const rows = data?.waterlevel_data?.data;
+        if (!Array.isArray(rows)) throw new Error("รูปแบบข้อมูล ThaiWater ไม่ถูกต้อง");
+        liveStations = rows.map(toThaiWaterStation).filter(Boolean);
+        liveLoadedAt = Date.now();
+        liveError = null;
+      } catch (error) {
+        // Keep showing earlier live readings (if any); the snapshot still covers us.
+        liveError = error;
+      }
+      rebuildStations();
+    }
+
+    let refreshing = false;
+    async function refreshAll() {
+      if (refreshing) return;
+      refreshing = true;
+      try {
+        await Promise.allSettled([refreshSnapshot(), refreshLive()]);
+        loadHistory(chartCode, false);
+      } finally {
+        refreshing = false;
+      }
+    }
+
+    /* ---------- 48-hour history chart ---------- */
+    let chartCode = PRIMARY_STATION;
+    let chartPoints = [];
+    const historyCache = new Map();
+
+    function bangkokDate(ms) {
+      return new Date(ms + 7 * 3600 * 1000).toISOString().slice(0, 10);
+    }
+
+    function renderChartChips() {
+      const withHistory = stations.filter((station) => station.thaiWaterId);
+      $("#chart-chips").replaceChildren(...(withHistory.length > 1 ? withHistory : []).map((station) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "chip-btn";
+        button.textContent = station.stationCode;
+        button.setAttribute("aria-pressed", String(station.stationCode === chartCode));
+        button.addEventListener("click", () => { chartCode = station.stationCode; renderChartChips(); loadHistory(chartCode, true); });
+        return button;
+      }));
+      if (!chartPoints.length && withHistory.length) loadHistory(chartCode, false);
+    }
+
+    async function loadHistory(code, force) {
+      const station = stations.find((item) => item.stationCode === code);
+      if (!station?.thaiWaterId) { if (stations.length) showChartMessage("สถานีนี้ไม่มีข้อมูลย้อนหลัง"); return; }
+      const cached = historyCache.get(code);
+      if (cached && Date.now() - cached.at < 10 * 60 * 1000) { chartPoints = cached.points; drawChart(); return; }
+      if (cached && !force) { chartPoints = cached.points; drawChart(); }
+      const now = Date.now();
+      const url = `${THAIWATER}/waterlevel_graph?station_type=tele_waterlevel&station_id=${encodeURIComponent(station.thaiWaterId)}&start_date=${bangkokDate(now - HISTORY_HOURS * 3600 * 1000)}&end_date=${bangkokDate(now + 24 * 3600 * 1000)}`;
+      try {
+        const data = await fetchJSON(url, 25000);
+        const rows = data?.data?.graph_data;
+        if (!Array.isArray(rows)) throw new Error("bad graph");
+        const since = now - HISTORY_HOURS * 3600 * 1000;
+        const points = rows
+          .map((row) => ({ t: parseThaiWaterDate(row.datetime)?.getTime(), v: finiteOrNull(row.value) }))
+          .filter((point) => point.t && point.v != null && point.t >= since && point.t <= now + 5 * 60000 && point.v > -50 && point.v < 500);
+        historyCache.set(code, { at: Date.now(), points });
+        if (code === chartCode) { chartPoints = points; drawChart(); }
+      } catch {
+        if (code === chartCode && !chartPoints.length) showChartMessage("โหลดกราฟย้อนหลังไม่ได้ในขณะนี้ ข้อมูลปัจจุบันด้านบนยังใช้ได้ตามปกติ");
+      }
+    }
+
+    function showChartMessage(text) {
+      const box = $("#chart-box");
+      box.querySelector("svg")?.remove();
+      $("#chart-empty").hidden = false;
+      $("#chart-empty").textContent = text;
+      $("#chart-summary").textContent = "";
+      $("#chart-rows").replaceChildren();
+    }
+
+    function niceTicks(min, max, count) {
+      const step0 = (max - min) / count;
+      const magnitude = 10 ** Math.floor(Math.log10(step0));
+      const step = [1, 2, 2.5, 5, 10].map((m) => m * magnitude).find((candidate) => candidate >= step0);
+      const ticks = [];
+      for (let value = Math.ceil(min / step) * step; value <= max + 1e-9; value += step) ticks.push(Number(value.toFixed(6)));
+      return ticks;
+    }
+
+    function drawChart() {
+      const station = stations.find((item) => item.stationCode === chartCode);
+      const points = chartPoints;
+      if (points.length < 2) { showChartMessage("ยังไม่มีข้อมูลย้อนหลังพอสำหรับวาดกราฟ"); return; }
+      $("#chart-empty").hidden = true;
+      const box = $("#chart-box");
+      const width = box.clientWidth || 600;
+      const height = box.clientHeight || 240;
+      const margin = { top: 14, right: 58, bottom: 26, left: 40 };
+      const bank = station?.bankLevelMeters ?? null;
+      const values = points.map((point) => point.v);
+      let low = Math.min(...values, bank ?? Infinity);
+      let high = Math.max(...values, bank ?? -Infinity);
+      const pad = Math.max((high - low) * 0.12, 0.1);
+      low -= pad; high += pad;
+      const t0 = points[0].t, t1 = points[points.length - 1].t;
+      const x = (t) => margin.left + (t - t0) / (t1 - t0 || 1) * (width - margin.left - margin.right);
+      const y = (v) => margin.top + (high - v) / (high - low) * (height - margin.top - margin.bottom);
+      const NS = "http://www.w3.org/2000/svg";
+      const el = (name, attrs, text) => {
+        const node = document.createElementNS(NS, name);
+        for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value);
+        if (text != null) node.textContent = text;
+        return node;
+      };
+      const svg = el("svg", { viewBox: `0 0 ${width} ${height}`, role: "img", "aria-label": `กราฟระดับน้ำ ${chartCode} ย้อนหลัง ${HISTORY_HOURS} ชั่วโมง` });
+
+      for (const tick of niceTicks(low, high, 4)) {
+        svg.append(el("line", { class: "grid", x1: margin.left, x2: width - margin.right, y1: y(tick), y2: y(tick) }));
+        svg.append(el("text", { class: "axis-text", x: margin.left - 6, y: y(tick) + 4, "text-anchor": "end" }, tick.toFixed(1)));
+      }
+      // X ticks at Bangkok midnight and noon.
+      const dayFormat = new Intl.DateTimeFormat("th-TH", { day: "numeric", month: "short", timeZone: "Asia/Bangkok" });
+      const twelveHours = 12 * 3600 * 1000;
+      for (let t = Math.ceil((t0 + 7 * 3600 * 1000) / twelveHours) * twelveHours - 7 * 3600 * 1000; t <= t1; t += twelveHours) {
+        const midnight = new Date(t + 7 * 3600 * 1000).getUTCHours() === 0;
+        svg.append(el("text", { class: "axis-text", x: x(t), y: height - 6, "text-anchor": "middle" }, midnight ? dayFormat.format(t) : "12:00"));
+      }
+
+      // Break the line where readings are missing for over 3 hours instead of drawing a false straight segment.
+      let d = "";
+      points.forEach((point, index) => {
+        const gap = index > 0 && point.t - points[index - 1].t > 3 * 3600 * 1000;
+        d += `${index === 0 || gap ? "M" : "L"}${x(point.t).toFixed(1)},${y(point.v).toFixed(1)}`;
       });
-    });
-    searchInput.addEventListener("input", () => {
-      renderStations();
-      renderBridgeReferences();
+      const baseline = y(low);
+      svg.append(el("path", { class: "area", d: `${d}L${x(t1).toFixed(1)},${baseline}L${x(t0).toFixed(1)},${baseline}Z` }));
+      if (bank != null) {
+        svg.append(el("line", { class: "bank-line", x1: margin.left, x2: width - margin.right, y1: y(bank), y2: y(bank) }));
+        svg.append(el("text", { class: "bank-text", x: width - margin.right + 6, y: y(bank) + 4 }, `ตลิ่ง ${bank.toFixed(2)}`));
+      }
+      svg.append(el("path", { class: "series", d }));
+      const last = points[points.length - 1];
+      svg.append(el("circle", { class: "end-dot", cx: x(last.t), cy: y(last.v), r: 4.5 }));
+      const endLabelY = bank != null && Math.abs(y(last.v) - y(bank)) < 14 ? y(last.v) + (y(last.v) > y(bank) ? 14 : -8) : y(last.v) + 4;
+      svg.append(el("text", { class: "end-text", x: x(last.t) + 8, y: endLabelY }, last.v.toFixed(2)));
+
+      const cross = el("line", { class: "cross", y1: margin.top, y2: height - margin.bottom, visibility: "hidden" });
+      const hoverDot = el("circle", { class: "hover-dot", r: 5, visibility: "hidden" });
+      const hit = el("rect", { x: margin.left, y: 0, width: width - margin.left - margin.right, height, fill: "transparent" });
+      svg.append(cross, hoverDot, hit);
+      const tip = $("#chart-tip");
+      const fullFormat = new Intl.DateTimeFormat("th-TH", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Asia/Bangkok" });
+      const show = (event) => {
+        const rect = svg.getBoundingClientRect();
+        const px = (event.clientX - rect.left) * (width / rect.width);
+        const target = t0 + (px - margin.left) / (width - margin.left - margin.right) * (t1 - t0);
+        let nearest = points[0];
+        for (const point of points) if (Math.abs(point.t - target) < Math.abs(nearest.t - target)) nearest = point;
+        const cx = x(nearest.t), cy = y(nearest.v);
+        cross.setAttribute("x1", cx); cross.setAttribute("x2", cx); cross.setAttribute("visibility", "visible");
+        hoverDot.setAttribute("cx", cx); hoverDot.setAttribute("cy", cy); hoverDot.setAttribute("visibility", "visible");
+        const diff = bank != null ? nearest.v - bank : null;
+        tip.innerHTML = `<b>${nearest.v.toFixed(2)} ม.</b><br><span>${escapeHTML(fullFormat.format(nearest.t))} น.${diff != null ? ` · ${diff >= 0 ? "เกินตลิ่ง +" : "ต่ำกว่าตลิ่ง "}${Math.abs(diff).toFixed(2)}` : ""}</span>`;
+        tip.style.display = "block";
+        const left = cx / width * rect.width;
+        tip.style.left = `${Math.min(Math.max(left - tip.offsetWidth / 2, 0), rect.width - tip.offsetWidth)}px`;
+        tip.style.top = `${Math.max(cy / height * rect.height - tip.offsetHeight - 12, 0)}px`;
+      };
+      const hide = () => { cross.setAttribute("visibility", "hidden"); hoverDot.setAttribute("visibility", "hidden"); tip.style.display = "none"; };
+      hit.addEventListener("pointermove", show);
+      hit.addEventListener("pointerdown", show);
+      hit.addEventListener("pointerleave", hide);
+
+      box.querySelector("svg")?.remove();
+      box.prepend(svg);
+
+      // Plain-language summary: where the level is heading over the last 24 h.
+      const dayAgo = points.find((point) => point.t >= last.t - 24 * 3600 * 1000) ?? points[0];
+      const change = last.v - dayAgo.v;
+      const peak = points.reduce((best, point) => (point.v > best.v ? point : best), points[0]);
+      $("#chart-summary").innerHTML = `${escapeHTML(station?.name ?? chartCode)} · ใน 24 ชม. <strong>${Math.abs(change) < 0.01 ? "ทรงตัว" : change > 0 ? `น้ำขึ้น ${change.toFixed(2)} ม.` : `น้ำลด ${Math.abs(change).toFixed(2)} ม.`}</strong> · สูงสุด ${peak.v.toFixed(2)} ม. (${escapeHTML(fullFormat.format(peak.t))} น.)`;
+
+      // Table view: one row per hour, newest first.
+      const hourly = new Map();
+      for (const point of points) hourly.set(Math.floor(point.t / 3600000), point);
+      $("#chart-rows").replaceChildren(...[...hourly.values()].reverse().map((point) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td>${escapeHTML(fullFormat.format(point.t))} น.</td><td class="num">${point.v.toFixed(2)}</td>`;
+        return row;
+      }));
+    }
+
+    let chartResizeTimer;
+    window.addEventListener("resize", () => { clearTimeout(chartResizeTimer); chartResizeTimer = setTimeout(() => { if (chartPoints.length) drawChart(); }, 150); });
+
+    /* ---------- Share ---------- */
+    $("#share-btn").addEventListener("click", async () => {
+      const url = "https://nongmickey.github.io/banpong-water-warning/";
+      const station = primaryStation();
+      const text = station ? `ระดับน้ำบ้านโป่งตอนนี้ ${station.waterLevelMeters.toFixed(2)} ม. · ${STATUS[station.status].word}` : "ระดับน้ำบ้านโป่ง";
+      try {
+        if (navigator.share) { await navigator.share({ title: "ระดับน้ำบ้านโป่ง", text, url }); return; }
+      } catch (error) {
+        if (error?.name === "AbortError") return;
+      }
+      try {
+        await navigator.clipboard.writeText(`${text}\n${url}`);
+        showToast("คัดลอกลิงก์แล้ว", "วางลิงก์ใน LINE หรือ Facebook เพื่อแชร์ได้เลย");
+      } catch {
+        window.prompt("คัดลอกลิงก์นี้เพื่อแชร์", url);
+      }
     });
 
-    if (window.L) {
-      map = L.map("map", { zoomControl: true, scrollWheelZoom: true }).setView([13.8145, 99.8725], 12);
-      const satelliteLayer = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
-        maxZoom: 19,
-        attribution: "Tiles &copy; Esri, Maxar, Earthstar Geographics, and the GIS User Community"
-      }).addTo(map);
-      const placeLabelsLayer = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}", {
-        maxZoom: 19,
-        attribution: "Labels &copy; Esri"
-      }).addTo(map);
-      const streetLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 19,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-      });
-      const terrainLayer = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
-        maxZoom: 17,
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, SRTM | Map style &copy; <a href="https://opentopomap.org">OpenTopoMap</a>'
-      });
-      const layerControl = L.control.layers({
-        "ภาพดาวเทียม (Esri)": satelliteLayer,
-        "แผนที่ถนน (OpenStreetMap)": streetLayer,
-        "ภูมิประเทศ (OpenTopoMap)": terrainLayer
-      }, {
-        "ชื่อสถานที่และแนวถนน (Esri)": placeLabelsLayer
-      }, { collapsed: true, position: "topright" }).addTo(map);
-      fetch("./ban-pong-boundary.geojson")
-        .catch(() => fetch("https://raw.githubusercontent.com/Nongmickey/banpong-water-warning/main/ban-pong-boundary.geojson"))
-        .then((response) => {
-          if (!response.ok) throw new Error("District boundary is unavailable");
-          return response.json();
-        })
-        .then((boundaryData) => {
-          const banPongFeature = boundaryData.features.find((feature) => feature.properties.shapeName === "Ban Pong");
-          if (!banPongFeature) throw new Error("Ban Pong boundary is missing");
-          const boundaryLayer = L.geoJSON(banPongFeature, {
-            style: { color: "#ffe34d", weight: 4, opacity: 1, fillColor: "#30c5b5", fillOpacity: 0.12 }
-          });
-          districtBounds = boundaryLayer.getBounds();
-          boundaryLayer.bindPopup('<div class="popup-title">ขอบเขตอำเภอบ้านโป่ง</div><div class="popup-detail">geoBoundaries ADM2 · ข้อมูลปี 2019<br>ที่มา: Royal Thai Survey Department, OCHA ROAP · CC BY 3.0 IGO</div>');
-          boundaryLayer.addTo(map);
-          layerControl.addOverlay(boundaryLayer, "ขอบเขตอำเภอบ้านโป่ง (geoBoundaries)");
-          map.fitBounds(districtBounds, { padding: [28, 28], maxZoom: 11 });
-        })
-        .catch(() => {
-          document.querySelector("#map-error").textContent = "โหลดแนวเขตอำเภอไม่ได้ · ยังใช้แผนที่และสถานีได้ตามปกติ";
-          document.querySelector("#map-error").classList.add("visible");
-        });
-      refreshStationData();
-      window.setInterval(refreshStationData, 10 * 60 * 1000);
-      window.addEventListener("resize", () => {
-        map.invalidateSize();
-        if (districtBounds) map.fitBounds(districtBounds, { padding: [28, 28], maxZoom: 11 });
-      });
-    } else {
-      document.querySelector("#map-error").classList.add("visible");
-      refreshStationData();
+    /* ---------- Notifications every 30 minutes ---------- */
+    let swRegistration = null;
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("./sw.js").then((reg) => { swRegistration = reg; }).catch(() => {});
     }
+
+    function notifyEnabled() { return store.get("notify") === "on"; }
+
+    async function showNotification(title, body) {
+      showToast(title, body);
+      if (!("Notification" in window) || Notification.permission !== "granted") return;
+      const options = { body, icon: "./icon.svg", badge: "./icon.svg", tag: "banpong-water", renotify: true, lang: "th" };
+      try {
+        // Android Chrome only allows notifications through a service worker.
+        if (swRegistration) await swRegistration.showNotification(title, options);
+        else new Notification(title, options);
+      } catch { /* the in-page toast already showed it */ }
+    }
+
+    let toastTimer;
+    function showToast(title, body) {
+      $("#toast-title").textContent = title;
+      $("#toast-body").textContent = body;
+      $("#toast").classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => $("#toast").classList.remove("show"), 15000);
+    }
+    $("#toast-close").addEventListener("click", () => $("#toast").classList.remove("show"));
+
+    function statusMessage() {
+      const station = primaryStation();
+      if (!station) return null;
+      return {
+        title: `น้ำบ้านโป่ง: ${STATUS[station.status].word}`,
+        body: `${station.name} ${station.waterLevelMeters.toFixed(2)} ม. · ${station.reason} · ${clock(Date.now())} น.`
+      };
+    }
+
+    function checkNotify() {
+      if (!notifyEnabled()) return renderNotifyUI();
+      const station = primaryStation();
+      if (!station) return;
+      const last = Number(store.get("notifyLast")) || 0;
+      const lastRank = Number(store.get("notifyRank") ?? -1);
+      const rank = STATUS[station.status].rank;
+      const due = Date.now() - last >= NOTIFY_EVERY_MS;
+      // Notify on the 30-minute schedule, or immediately if things got worse since the last message.
+      if (due || rank > lastRank) {
+        const message = statusMessage();
+        showNotification(rank > lastRank && !due ? `⚠️ ${message.title}` : message.title, message.body);
+        store.set("notifyLast", String(Date.now()));
+      }
+      store.set("notifyRank", String(rank));
+      renderNotifyUI();
+    }
+
+    function renderNotifyUI() {
+      const on = notifyEnabled();
+      const button = $("#notify-btn");
+      button.classList.toggle("off", on);
+      $("#notify-btn-text").textContent = on ? "ปิดการแจ้งเตือน" : "เปิดการแจ้งเตือน";
+      button.querySelector(".icon").textContent = on ? "notifications_off" : "notifications_active";
+      $("#notify-icon").textContent = on ? "notifications_active" : "notifications";
+      if (!on) {
+        $("#notify-status").textContent = "เปิดไว้แล้วจะแจ้งสถานะน้ำทุก 30 นาที และแจ้งทันทีเมื่อสถานการณ์แย่ลง (ต้องเปิดหน้านี้ค้างไว้)";
+        return;
+      }
+      const last = Number(store.get("notifyLast")) || Date.now();
+      const blocked = "Notification" in window && Notification.permission === "denied";
+      $("#notify-status").textContent = `เปิดอยู่ · แจ้งครั้งถัดไปประมาณ ${clock(last + NOTIFY_EVERY_MS)} น.${blocked ? " · เบราว์เซอร์บล็อกการแจ้งเตือน จะแสดงเฉพาะในหน้านี้" : ""}`;
+    }
+
+    $("#notify-btn").addEventListener("click", async () => {
+      if (notifyEnabled()) {
+        store.set("notify", "off");
+        renderNotifyUI();
+        return;
+      }
+      if ("Notification" in window && Notification.permission === "default") {
+        try { await Notification.requestPermission(); } catch { /* old Safari */ }
+      }
+      store.set("notify", "on");
+      store.set("notifyLast", "0");
+      checkNotify();
+    });
+
+    /* ---------- Map ---------- */
+    async function loadBoundary() {
+      let data;
+      try { data = await fetchJSON("./ban-pong-boundary.geojson"); }
+      catch { data = await fetchJSON("https://raw.githubusercontent.com/Nongmickey/banpong-water-warning/main/ban-pong-boundary.geojson"); }
+      const feature = data.features?.find((f) => f.properties?.shapeName === "Ban Pong");
+      if (!feature) return;
+      const layer = L.geoJSON(feature, { style: { color: "#ffd83d", weight: 3, dashArray: "6 4", fillColor: "#30c5b5", fillOpacity: 0.08 } }).addTo(map);
+      layer.bringToBack();
+      map.fitBounds(layer.getBounds(), { padding: [20, 20], maxZoom: 12 });
+    }
+
+    function loadScript(src) {
+      return new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = src;
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.append(script);
+      });
+    }
+
+    async function initMap() {
+      if (!window.L) {
+        // unpkg failed (blocked network, outage): retry once from cdnjs.
+        const css = document.createElement("link");
+        css.rel = "stylesheet";
+        css.href = "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css";
+        document.head.append(css);
+        try { await loadScript("https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"); } catch { /* handled below */ }
+      }
+      if (!window.L) { $("#map-error").classList.add("visible"); return; }
+      map = L.map("map", { scrollWheelZoom: false, tap: true }).setView([13.8145, 99.8725], 12);
+      const streets = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+      }).addTo(map);
+      const satellite = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
+        maxZoom: 19, attribution: "Tiles &copy; Esri"
+      });
+      L.control.layers({ "แผนที่ถนน": streets, "ภาพดาวเทียม": satellite }, null, { position: "topright" }).addTo(map);
+      loadBoundary().catch(() => {});
+      let resizeTimer;
+      window.addEventListener("resize", () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => map.invalidateSize(), 150); });
+      renderMarkers();
+    }
+
+    document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") refreshAll(); });
+    window.addEventListener("online", refreshAll);
+    setInterval(refreshAll, REFRESH_MS);
+    // Check every minute so the 30-minute notification fires on time even between data refreshes.
+    setInterval(() => { if (stations.length) { renderUpdated(); checkNotify(); } }, 60 * 1000);
+    renderNotifyUI();
+    initMap();
+    refreshAll();
   </script>
 </body>
 </html>
