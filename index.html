@@ -503,7 +503,7 @@
       $("#updated-text").textContent = newest ? `วัดล่าสุด ${relativeTime(newest)}` : "ไม่ทราบเวลาวัด";
       source.classList.toggle("problem", !current);
       source.textContent = [
-        liveLoadedAt ? `ข้อมูลสดจาก ThaiWater โหลดเมื่อ ${clock(liveLoadedAt)} น.` : liveError ? "โหลดข้อมูลสดจาก ThaiWater ไม่ได้ ใช้ข้อมูลสำรองจากระบบอัตโนมัติแทน" : "กำลังโหลดข้อมูลสดจาก ThaiWater...",
+        liveLoadedAt ? `ข้อมูลสดจาก ThaiWater โหลดเมื่อ ${clock(liveLoadedAt)} น.` : liveError ? (liveError.status === 429 ? "ThaiWater จำกัดการเรียกข้อมูลจากเว็บนี้ชั่วคราว กำลังแสดงข้อมูลจากระบบอัตโนมัติแทน" : "โหลดข้อมูลสดจาก ThaiWater ไม่ได้ กำลังแสดงข้อมูลจากระบบอัตโนมัติแทน") : "กำลังโหลดข้อมูลสดจาก ThaiWater...",
         snapshot ? `ข้อมูลสำรอง (กรมชลประทาน + ThaiWater): ${formatTime(snapshot.checkedAt)}` : snapshotError ? "โหลดไฟล์ข้อมูลสำรองไม่ได้" : "",
         ...stations.map((station) => `${station.stationCode}: ${measuredText(station)} · ${station.dataSource ?? ""}${isCurrent(station) ? "" : " (ข้อมูลเก่า)"}`),
         current ? "" : `ไม่มีสถานีที่มีข้อมูลใหม่กว่า ${STALE_MINUTES / 60} ชั่วโมง โปรดตรวจสอบกับประกาศทางการ`
@@ -577,7 +577,7 @@
       const timer = setTimeout(() => controller.abort(), timeoutMs);
       try {
         const response = await fetch(url, { cache: "no-store", signal: controller.signal });
-        if (!response.ok) throw Object.assign(new Error(`โหลดข้อมูลไม่สำเร็จ (HTTP ${response.status})`), { status: response.status, retryAfter: Number(response.headers.get("retry-after")) || null });
+        if (!response.ok) throw Object.assign(new Error(`โหลดข้อมูลไม่สำเร็จ (HTTP ${response.status})`), { status: response.status });
         return await response.json();
       } catch (error) {
         if (error.name === "AbortError") throw new Error("โหลดข้อมูลนานเกินไป");
@@ -588,18 +588,20 @@
       }
     }
 
-    // ThaiWater rejects bursts of parallel requests with HTTP 429, so its calls go through a
-    // one-at-a-time queue and back off briefly when rate-limited.
+    // ThaiWater sometimes answers HTTP 429 (rate limited) for requests from this site. We respect that:
+    // no retries, pause all browser calls for 30 minutes and rely on the snapshot built by GitHub Actions.
+    // Calls also go one at a time, since parallel bursts are more likely to be refused.
+    const THAIWATER_PAUSE_MS = 30 * 60 * 1000;
+    let thaiWaterPausedUntil = 0;
     let thaiWaterQueue = Promise.resolve();
     function fetchThaiWater(url) {
       const run = async () => {
-        for (let attempt = 0; ; attempt += 1) {
-          try {
-            return await fetchJSON(url, 25000);
-          } catch (error) {
-            if (error.status !== 429 || attempt >= 2) throw error;
-            await new Promise((resolve) => setTimeout(resolve, (error.retryAfter ?? (attempt + 1) * 4) * 1000));
-          }
+        if (Date.now() < thaiWaterPausedUntil) throw Object.assign(new Error("ThaiWater จำกัดการเรียกข้อมูลชั่วคราว"), { status: 429 });
+        try {
+          return await fetchJSON(url, 25000);
+        } catch (error) {
+          if (error.status === 429) thaiWaterPausedUntil = Date.now() + THAIWATER_PAUSE_MS;
+          throw error;
         }
       };
       const result = thaiWaterQueue.then(run, run);
