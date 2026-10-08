@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "checkedAt": "2026-10-08T16:56:14.872Z",
+  "checkedAt": "2026-10-08T21:55:25.898Z",
   "source": {
     "name": "Royal Irrigation Department SWOC key-station telemetry",
     "url": "https://swoc.rid.go.th/webservice/keystation/getKeyStationGeoJson.ashx",
@@ -41,8 +41,8 @@
       "measuredAt": {
         "raw": "2026-10-08 21:00 น.",
         "iso": "2026-10-08T14:00:00.000Z",
-        "quality": "current",
-        "ageMinutes": 176
+        "quality": "stale",
+        "ageMinutes": 475
       }
     },
     {
@@ -57,20 +57,20 @@
       "river": "แม่น้ำแม่กลอง",
       "latitude": 13.81866,
       "longitude": 99.86508,
-      "waterLevelMeters": 7.21,
-      "previousWaterLevelMeters": 7.2,
+      "waterLevelMeters": 7.11,
+      "previousWaterLevelMeters": 7.12,
       "bankLevelMeters": 9.56,
       "dischargeCubicMetersPerSecond": null,
-      "dischargeCapacityPercent": 75.13,
+      "dischargeCapacityPercent": 74.01,
       "ridStatusCode": null,
-      "ridTrend": "ต่ำกว่าตลิ่ง 2.35 ม.",
+      "ridTrend": "ต่ำกว่าตลิ่ง 2.45 ม.",
       "agency": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
       "dataSource": "ThaiWater",
       "measuredAt": {
-        "raw": "2026-10-08 23:40 น.",
-        "iso": "2026-10-08T16:40:00.000Z",
+        "raw": "2026-10-09 04:40 น.",
+        "iso": "2026-10-08T21:40:00.000Z",
         "quality": "current",
-        "ageMinutes": 16
+        "ageMinutes": 15
       }
     }
   ],
