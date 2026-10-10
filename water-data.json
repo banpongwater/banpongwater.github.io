@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "checkedAt": "2026-10-10T16:19:20.838Z",
+  "checkedAt": "2026-10-10T23:39:02.864Z",
   "source": {
     "name": "Royal Irrigation Department SWOC key-station telemetry",
     "url": "https://swoc.rid.go.th/webservice/keystation/getKeyStationGeoJson.ashx",
@@ -29,20 +29,20 @@
       "river": "แม่น้ำแม่กลอง",
       "latitude": 13.818668365478516,
       "longitude": 99.86474609375,
-      "waterLevelMeters": 6.36,
-      "previousWaterLevelMeters": 6.38,
+      "waterLevelMeters": 6.27,
+      "previousWaterLevelMeters": 6.28,
       "bankLevelMeters": 9,
-      "dischargeCubicMetersPerSecond": 916.4,
-      "dischargeCapacityPercent": 72.15,
+      "dischargeCubicMetersPerSecond": 894.8,
+      "dischargeCapacityPercent": 71.2,
       "ridStatusCode": null,
-      "ridTrend": "ต่ำกว่าตลิ่ง 2.64 ม.",
+      "ridTrend": "ต่ำกว่าตลิ่ง 2.73 ม.",
       "agency": "กรมชลประทาน",
       "dataSource": "ThaiWater",
       "measuredAt": {
-        "raw": "2026-10-10 22:00 น.",
-        "iso": "2026-10-10T15:00:00.000Z",
+        "raw": "2026-10-11 05:00 น.",
+        "iso": "2026-10-10T22:00:00.000Z",
         "quality": "current",
-        "ageMinutes": 79
+        "ageMinutes": 99
       }
     },
     {
@@ -57,20 +57,20 @@
       "river": "แม่น้ำแม่กลอง",
       "latitude": 13.81866,
       "longitude": 99.86508,
-      "waterLevelMeters": 6.25,
-      "previousWaterLevelMeters": 6.25,
+      "waterLevelMeters": 6.15,
+      "previousWaterLevelMeters": 6.15,
       "bankLevelMeters": 9.56,
       "dischargeCubicMetersPerSecond": null,
-      "dischargeCapacityPercent": 64.88,
+      "dischargeCapacityPercent": 63.83,
       "ridStatusCode": null,
-      "ridTrend": "ต่ำกว่าตลิ่ง 3.31 ม.",
+      "ridTrend": "ต่ำกว่าตลิ่ง 3.41 ม.",
       "agency": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
       "dataSource": "ThaiWater",
       "measuredAt": {
-        "raw": "2026-10-10 22:10 น.",
-        "iso": "2026-10-10T15:10:00.000Z",
+        "raw": "2026-10-11 06:20 น.",
+        "iso": "2026-10-10T23:20:00.000Z",
         "quality": "current",
-        "ageMinutes": 69
+        "ageMinutes": 19
       }
     }
   ],
@@ -128,6 +128,5 @@
       "source": "OpenStreetMap; ThaiWater",
       "sourceUrl": "https://www.openstreetmap.org/way/284618017"
     }
-  ],
-  "collectionError": "No source returned required Ban Pong station K.55A (RID SWOC: fetch failed (UND_ERR_CONNECT_TIMEOUT); ThaiWater: ThaiWater response has no water-level list)"
+  ]
 }
