@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "checkedAt": "2026-10-11T15:36:54.438Z",
+  "checkedAt": "2026-10-11T19:43:03.560Z",
   "source": {
     "name": "Royal Irrigation Department SWOC key-station telemetry",
     "url": "https://swoc.rid.go.th/webservice/keystation/getKeyStationGeoJson.ashx",
@@ -29,20 +29,20 @@
       "river": "แม่น้ำแม่กลอง",
       "latitude": 13.818668365478516,
       "longitude": 99.86474609375,
-      "waterLevelMeters": 6.51,
-      "previousWaterLevelMeters": 6.48,
+      "waterLevelMeters": 6.55,
+      "previousWaterLevelMeters": 6.53,
       "bankLevelMeters": 9,
-      "dischargeCubicMetersPerSecond": 952.4,
-      "dischargeCapacityPercent": 73.73,
+      "dischargeCubicMetersPerSecond": 962,
+      "dischargeCapacityPercent": 74.16,
       "ridStatusCode": null,
-      "ridTrend": "ต่ำกว่าตลิ่ง 2.49 ม.",
+      "ridTrend": "ต่ำกว่าตลิ่ง 2.45 ม.",
       "agency": "กรมชลประทาน",
       "dataSource": "ThaiWater",
       "measuredAt": {
-        "raw": "2026-10-11 21:00 น.",
-        "iso": "2026-10-11T14:00:00.000Z",
-        "quality": "current",
-        "ageMinutes": 97
+        "raw": "2026-10-11 23:00 น.",
+        "iso": "2026-10-11T16:00:00.000Z",
+        "quality": "stale",
+        "ageMinutes": 223
       }
     },
     {
@@ -57,20 +57,20 @@
       "river": "แม่น้ำแม่กลอง",
       "latitude": 13.81866,
       "longitude": 99.86508,
-      "waterLevelMeters": 6.44,
-      "previousWaterLevelMeters": 6.43,
+      "waterLevelMeters": 6.55,
+      "previousWaterLevelMeters": 6.54,
       "bankLevelMeters": 9.56,
       "dischargeCubicMetersPerSecond": null,
-      "dischargeCapacityPercent": 66.92,
+      "dischargeCapacityPercent": 68.11,
       "ridStatusCode": null,
-      "ridTrend": "ต่ำกว่าตลิ่ง 3.12 ม.",
+      "ridTrend": "ต่ำกว่าตลิ่ง 3.01 ม.",
       "agency": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
       "dataSource": "ThaiWater",
       "measuredAt": {
-        "raw": "2026-10-11 22:20 น.",
-        "iso": "2026-10-11T15:20:00.000Z",
+        "raw": "2026-10-12 02:30 น.",
+        "iso": "2026-10-11T19:30:00.000Z",
         "quality": "current",
-        "ageMinutes": 17
+        "ageMinutes": 13
       }
     }
   ],
