@@ -128,5 +128,6 @@
       "source": "OpenStreetMap; ThaiWater",
       "sourceUrl": "https://www.openstreetmap.org/way/284618017"
     }
-  ]
+  ],
+  "collectionError": "No source returned required Ban Pong station K.55A (RID SWOC: fetch failed (UND_ERR_CONNECT_TIMEOUT); ThaiWater: ThaiWater response has no water-level list)"
 }
