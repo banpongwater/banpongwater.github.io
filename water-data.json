@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "checkedAt": "2026-10-15T00:52:23.929Z",
+  "checkedAt": "2026-10-15T05:38:55.461Z",
   "source": {
     "name": "Royal Irrigation Department SWOC key-station telemetry",
     "url": "https://swoc.rid.go.th/webservice/keystation/getKeyStationGeoJson.ashx",
@@ -29,20 +29,20 @@
       "river": "แม่น้ำแม่กลอง",
       "latitude": 13.818668365478516,
       "longitude": 99.86474609375,
-      "waterLevelMeters": 7.63,
-      "previousWaterLevelMeters": 7.6,
+      "waterLevelMeters": 7.72,
+      "previousWaterLevelMeters": 7.71,
       "bankLevelMeters": 9,
-      "dischargeCubicMetersPerSecond": 1240.1,
-      "dischargeCapacityPercent": 85.55,
+      "dischargeCubicMetersPerSecond": 1264.4,
+      "dischargeCapacityPercent": 86.5,
       "ridStatusCode": null,
-      "ridTrend": "ต่ำกว่าตลิ่ง 1.37 ม.",
+      "ridTrend": "ต่ำกว่าตลิ่ง 1.28 ม.",
       "agency": "กรมชลประทาน",
       "dataSource": "ThaiWater",
       "measuredAt": {
-        "raw": "2026-10-15 06:00 น.",
-        "iso": "2026-10-14T23:00:00.000Z",
+        "raw": "2026-10-15 11:00 น.",
+        "iso": "2026-10-15T04:00:00.000Z",
         "quality": "current",
-        "ageMinutes": 112
+        "ageMinutes": 99
       }
     },
     {
@@ -57,20 +57,20 @@
       "river": "แม่น้ำแม่กลอง",
       "latitude": 13.81866,
       "longitude": 99.86508,
-      "waterLevelMeters": 7.57,
-      "previousWaterLevelMeters": 7.56,
+      "waterLevelMeters": 7.63,
+      "previousWaterLevelMeters": 7.62,
       "bankLevelMeters": 9.56,
       "dischargeCubicMetersPerSecond": null,
-      "dischargeCapacityPercent": 78.88,
+      "dischargeCapacityPercent": 79.51,
       "ridStatusCode": null,
-      "ridTrend": "ต่ำกว่าตลิ่ง 1.99 ม.",
+      "ridTrend": "ต่ำกว่าตลิ่ง 1.93 ม.",
       "agency": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
       "dataSource": "ThaiWater",
       "measuredAt": {
-        "raw": "2026-10-15 07:40 น.",
-        "iso": "2026-10-15T00:40:00.000Z",
+        "raw": "2026-10-15 12:20 น.",
+        "iso": "2026-10-15T05:20:00.000Z",
         "quality": "current",
-        "ageMinutes": 12
+        "ageMinutes": 19
       }
     }
   ],
