@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "checkedAt": "2026-10-15T19:08:18.800Z",
+  "checkedAt": "2026-10-15T22:16:45.329Z",
   "source": {
     "name": "Royal Irrigation Department SWOC key-station telemetry",
     "url": "https://swoc.rid.go.th/webservice/keystation/getKeyStationGeoJson.ashx",
@@ -42,7 +42,7 @@
         "raw": "2026-10-15 22:00 น.",
         "iso": "2026-10-15T15:00:00.000Z",
         "quality": "stale",
-        "ageMinutes": 248
+        "ageMinutes": 437
       }
     },
     {
@@ -69,8 +69,8 @@
       "measuredAt": {
         "raw": "2026-10-15 23:10 น.",
         "iso": "2026-10-15T16:10:00.000Z",
-        "quality": "current",
-        "ageMinutes": 178
+        "quality": "stale",
+        "ageMinutes": 367
       }
     }
   ],
