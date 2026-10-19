@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "checkedAt": "2026-10-19T10:16:04.270Z",
+  "checkedAt": "2026-10-19T17:01:53.059Z",
   "source": {
     "name": "Royal Irrigation Department SWOC key-station telemetry",
     "url": "https://swoc.rid.go.th/webservice/keystation/getKeyStationGeoJson.ashx",
@@ -29,20 +29,20 @@
       "river": "แม่น้ำแม่กลอง",
       "latitude": 13.818668365478516,
       "longitude": 99.86474609375,
-      "waterLevelMeters": 7.88,
-      "previousWaterLevelMeters": 7.89,
+      "waterLevelMeters": 7.91,
+      "previousWaterLevelMeters": 7.91,
       "bankLevelMeters": 9,
-      "dischargeCubicMetersPerSecond": 1307.6,
-      "dischargeCapacityPercent": 88.19,
+      "dischargeCubicMetersPerSecond": 1315.7,
+      "dischargeCapacityPercent": 88.5,
       "ridStatusCode": null,
-      "ridTrend": "ต่ำกว่าตลิ่ง 1.12 ม.",
+      "ridTrend": "ต่ำกว่าตลิ่ง 1.09 ม.",
       "agency": "กรมชลประทาน",
       "dataSource": "ThaiWater",
       "measuredAt": {
-        "raw": "2026-10-19 16:00 น.",
-        "iso": "2026-10-19T09:00:00.000Z",
+        "raw": "2026-10-19 23:00 น.",
+        "iso": "2026-10-19T16:00:00.000Z",
         "quality": "current",
-        "ageMinutes": 76
+        "ageMinutes": 62
       }
     },
     {
@@ -57,48 +57,20 @@
       "river": "แม่น้ำแม่กลอง",
       "latitude": 13.81866,
       "longitude": 99.86508,
-      "waterLevelMeters": 7.76,
-      "previousWaterLevelMeters": 7.76,
+      "waterLevelMeters": 7.82,
+      "previousWaterLevelMeters": 7.81,
       "bankLevelMeters": 9.56,
       "dischargeCubicMetersPerSecond": null,
-      "dischargeCapacityPercent": 80.9,
+      "dischargeCapacityPercent": 81.49,
       "ridStatusCode": null,
-      "ridTrend": "ต่ำกว่าตลิ่ง 1.80 ม.",
+      "ridTrend": "ต่ำกว่าตลิ่ง 1.74 ม.",
       "agency": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
       "dataSource": "ThaiWater",
       "measuredAt": {
-        "raw": "2026-10-19 17:00 น.",
-        "iso": "2026-10-19T10:00:00.000Z",
+        "raw": "2026-10-19 23:50 น.",
+        "iso": "2026-10-19T16:50:00.000Z",
         "quality": "current",
-        "ageMinutes": 16
-      }
-    },
-    {
-      "stationId": 11689033,
-      "thaiWaterId": 11689033,
-      "stationCode": "ridhydro_K.55A",
-      "role": "สถานีในอำเภอบ้านโป่ง",
-      "name": "สะพานค่ายหลวง",
-      "province": "ราชบุรี",
-      "district": "บ้านโป่ง",
-      "basin": "ลุ่มน้ำแม่กลอง",
-      "river": null,
-      "latitude": 13.80568,
-      "longitude": 99.87159,
-      "waterLevelMeters": 7.88,
-      "previousWaterLevelMeters": 3.52,
-      "bankLevelMeters": 11.61,
-      "dischargeCubicMetersPerSecond": null,
-      "dischargeCapacityPercent": 68.52,
-      "ridStatusCode": null,
-      "ridTrend": "ต่ำกว่าตลิ่ง 3.73 ม.",
-      "agency": "กรมชลประทาน",
-      "dataSource": "ThaiWater",
-      "measuredAt": {
-        "raw": "2026-10-19 16:00 น.",
-        "iso": "2026-10-19T09:00:00.000Z",
-        "quality": "current",
-        "ageMinutes": 76
+        "ageMinutes": 12
       }
     }
   ],
