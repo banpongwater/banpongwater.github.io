@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "checkedAt": "2026-10-19T00:02:24.650Z",
+  "checkedAt": "2026-10-19T04:33:26.638Z",
   "source": {
     "name": "Royal Irrigation Department SWOC key-station telemetry",
     "url": "https://swoc.rid.go.th/webservice/keystation/getKeyStationGeoJson.ashx",
@@ -29,20 +29,20 @@
       "river": "แม่น้ำแม่กลอง",
       "latitude": 13.818668365478516,
       "longitude": 99.86474609375,
-      "waterLevelMeters": 7.97,
-      "previousWaterLevelMeters": 7.97,
+      "waterLevelMeters": 7.98,
+      "previousWaterLevelMeters": 7.96,
       "bankLevelMeters": 9,
-      "dischargeCubicMetersPerSecond": 1331.9,
-      "dischargeCapacityPercent": 89.14,
+      "dischargeCubicMetersPerSecond": 1334.6,
+      "dischargeCapacityPercent": 89.24,
       "ridStatusCode": null,
-      "ridTrend": "ต่ำกว่าตลิ่ง 1.03 ม.",
+      "ridTrend": "ต่ำกว่าตลิ่ง 1.02 ม.",
       "agency": "กรมชลประทาน",
       "dataSource": "ThaiWater",
       "measuredAt": {
-        "raw": "2026-10-19 06:00 น.",
-        "iso": "2026-10-18T23:00:00.000Z",
+        "raw": "2026-10-19 10:00 น.",
+        "iso": "2026-10-19T03:00:00.000Z",
         "quality": "current",
-        "ageMinutes": 62
+        "ageMinutes": 93
       }
     },
     {
@@ -57,20 +57,20 @@
       "river": "แม่น้ำแม่กลอง",
       "latitude": 13.81866,
       "longitude": 99.86508,
-      "waterLevelMeters": 7.86,
+      "waterLevelMeters": 7.85,
       "previousWaterLevelMeters": 7.86,
       "bankLevelMeters": 9.56,
       "dischargeCubicMetersPerSecond": null,
-      "dischargeCapacityPercent": 81.95,
+      "dischargeCapacityPercent": 81.87,
       "ridStatusCode": null,
-      "ridTrend": "ต่ำกว่าตลิ่ง 1.70 ม.",
+      "ridTrend": "ต่ำกว่าตลิ่ง 1.71 ม.",
       "agency": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
       "dataSource": "ThaiWater",
       "measuredAt": {
-        "raw": "2026-10-19 06:50 น.",
-        "iso": "2026-10-18T23:50:00.000Z",
+        "raw": "2026-10-19 11:20 น.",
+        "iso": "2026-10-19T04:20:00.000Z",
         "quality": "current",
-        "ageMinutes": 12
+        "ageMinutes": 13
       }
     }
   ],
