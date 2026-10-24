@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "checkedAt": "2026-10-23T23:21:07.294Z",
+  "checkedAt": "2026-10-24T01:50:54.702Z",
   "source": {
     "name": "Royal Irrigation Department SWOC key-station telemetry",
     "url": "https://swoc.rid.go.th/webservice/keystation/getKeyStationGeoJson.ashx",
@@ -30,7 +30,7 @@
       "latitude": 13.818668365478516,
       "longitude": 99.86474609375,
       "waterLevelMeters": 6.17,
-      "previousWaterLevelMeters": 6.18,
+      "previousWaterLevelMeters": 6.17,
       "bankLevelMeters": 9,
       "dischargeCubicMetersPerSecond": 870.8,
       "dischargeCapacityPercent": 70.15,
@@ -39,10 +39,10 @@
       "agency": "กรมชลประทาน",
       "dataSource": "ThaiWater",
       "measuredAt": {
-        "raw": "2026-10-24 05:00 น.",
-        "iso": "2026-10-23T22:00:00.000Z",
+        "raw": "2026-10-24 07:00 น.",
+        "iso": "2026-10-24T00:00:00.000Z",
         "quality": "current",
-        "ageMinutes": 81
+        "ageMinutes": 111
       }
     },
     {
@@ -57,18 +57,18 @@
       "river": "แม่น้ำแม่กลอง",
       "latitude": 13.81866,
       "longitude": 99.86508,
-      "waterLevelMeters": 6.07,
-      "previousWaterLevelMeters": 6.07,
+      "waterLevelMeters": 6.06,
+      "previousWaterLevelMeters": 6.06,
       "bankLevelMeters": 9.56,
       "dischargeCubicMetersPerSecond": null,
-      "dischargeCapacityPercent": 62.94,
+      "dischargeCapacityPercent": 62.88,
       "ridStatusCode": null,
-      "ridTrend": "ต่ำกว่าตลิ่ง 3.49 ม.",
+      "ridTrend": "ต่ำกว่าตลิ่ง 3.50 ม.",
       "agency": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
       "dataSource": "ThaiWater",
       "measuredAt": {
-        "raw": "2026-10-24 06:00 น.",
-        "iso": "2026-10-23T23:00:00.000Z",
+        "raw": "2026-10-24 08:30 น.",
+        "iso": "2026-10-24T01:30:00.000Z",
         "quality": "current",
         "ageMinutes": 21
       }
