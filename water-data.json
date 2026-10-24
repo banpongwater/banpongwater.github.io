@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "checkedAt": "2026-10-24T06:58:50.868Z",
+  "checkedAt": "2026-10-24T11:56:44.879Z",
   "source": {
     "name": "Royal Irrigation Department SWOC key-station telemetry",
     "url": "https://swoc.rid.go.th/webservice/keystation/getKeyStationGeoJson.ashx",
@@ -29,20 +29,20 @@
       "river": "แม่น้ำแม่กลอง",
       "latitude": 13.818668365478516,
       "longitude": 99.86474609375,
-      "waterLevelMeters": 6.13,
-      "previousWaterLevelMeters": 6.15,
+      "waterLevelMeters": 5.93,
+      "previousWaterLevelMeters": 5.97,
       "bankLevelMeters": 9,
-      "dischargeCubicMetersPerSecond": 861.2,
-      "dischargeCapacityPercent": 69.73,
+      "dischargeCubicMetersPerSecond": 814.6,
+      "dischargeCapacityPercent": 67.62,
       "ridStatusCode": null,
-      "ridTrend": "ต่ำกว่าตลิ่ง 2.87 ม.",
+      "ridTrend": "ต่ำกว่าตลิ่ง 3.07 ม.",
       "agency": "กรมชลประทาน",
       "dataSource": "ThaiWater",
       "measuredAt": {
-        "raw": "2026-10-24 13:00 น.",
-        "iso": "2026-10-24T06:00:00.000Z",
+        "raw": "2026-10-24 18:00 น.",
+        "iso": "2026-10-24T11:00:00.000Z",
         "quality": "current",
-        "ageMinutes": 59
+        "ageMinutes": 57
       }
     },
     {
@@ -57,20 +57,20 @@
       "river": "แม่น้ำแม่กลอง",
       "latitude": 13.81866,
       "longitude": 99.86508,
-      "waterLevelMeters": 6,
-      "previousWaterLevelMeters": 6.01,
+      "waterLevelMeters": 5.8,
+      "previousWaterLevelMeters": 5.81,
       "bankLevelMeters": 9.56,
       "dischargeCubicMetersPerSecond": null,
-      "dischargeCapacityPercent": 62.28,
+      "dischargeCapacityPercent": 60.09,
       "ridStatusCode": null,
-      "ridTrend": "ต่ำกว่าตลิ่ง 3.56 ม.",
+      "ridTrend": "ต่ำกว่าตลิ่ง 3.76 ม.",
       "agency": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
       "dataSource": "ThaiWater",
       "measuredAt": {
-        "raw": "2026-10-24 13:40 น.",
-        "iso": "2026-10-24T06:40:00.000Z",
+        "raw": "2026-10-24 18:40 น.",
+        "iso": "2026-10-24T11:40:00.000Z",
         "quality": "current",
-        "ageMinutes": 19
+        "ageMinutes": 17
       }
     }
   ],
