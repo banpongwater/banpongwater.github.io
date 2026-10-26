@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "checkedAt": "2026-10-26T06:28:54.988Z",
+  "checkedAt": "2026-10-26T13:28:43.710Z",
   "source": {
     "name": "Royal Irrigation Department SWOC key-station telemetry",
     "url": "https://swoc.rid.go.th/webservice/keystation/getKeyStationGeoJson.ashx",
@@ -29,18 +29,18 @@
       "river": "แม่น้ำแม่กลอง",
       "latitude": 13.818668365478516,
       "longitude": 99.86474609375,
-      "waterLevelMeters": 5.75,
-      "previousWaterLevelMeters": 5.76,
+      "waterLevelMeters": 5.86,
+      "previousWaterLevelMeters": 5.83,
       "bankLevelMeters": 9,
-      "dischargeCubicMetersPerSecond": 775,
-      "dischargeCapacityPercent": 65.72,
+      "dischargeCubicMetersPerSecond": 799.2,
+      "dischargeCapacityPercent": 66.88,
       "ridStatusCode": null,
-      "ridTrend": "ต่ำกว่าตลิ่ง 3.25 ม.",
+      "ridTrend": "ต่ำกว่าตลิ่ง 3.14 ม.",
       "agency": "กรมชลประทาน",
       "dataSource": "ThaiWater",
       "measuredAt": {
-        "raw": "2026-10-26 12:00 น.",
-        "iso": "2026-10-26T05:00:00.000Z",
+        "raw": "2026-10-26 19:00 น.",
+        "iso": "2026-10-26T12:00:00.000Z",
         "quality": "current",
         "ageMinutes": 89
       }
@@ -57,18 +57,18 @@
       "river": "แม่น้ำแม่กลอง",
       "latitude": 13.81866,
       "longitude": 99.86508,
-      "waterLevelMeters": 5.66,
-      "previousWaterLevelMeters": 5.66,
+      "waterLevelMeters": 5.77,
+      "previousWaterLevelMeters": 5.77,
       "bankLevelMeters": 9.56,
       "dischargeCubicMetersPerSecond": null,
-      "dischargeCapacityPercent": 58.63,
+      "dischargeCapacityPercent": 59.82,
       "ridStatusCode": null,
-      "ridTrend": "ต่ำกว่าตลิ่ง 3.90 ม.",
+      "ridTrend": "ต่ำกว่าตลิ่ง 3.79 ม.",
       "agency": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
       "dataSource": "ThaiWater",
       "measuredAt": {
-        "raw": "2026-10-26 13:10 น.",
-        "iso": "2026-10-26T06:10:00.000Z",
+        "raw": "2026-10-26 20:10 น.",
+        "iso": "2026-10-26T13:10:00.000Z",
         "quality": "current",
         "ageMinutes": 19
       }
