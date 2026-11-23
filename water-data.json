@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "checkedAt": "2026-11-22T21:56:25.602Z",
+  "checkedAt": "2026-11-23T02:25:45.052Z",
   "source": {
     "name": "Royal Irrigation Department SWOC key-station telemetry",
     "url": "https://swoc.rid.go.th/webservice/keystation/getKeyStationGeoJson.ashx",
@@ -29,20 +29,20 @@
       "river": "แม่น้ำแม่กลอง",
       "latitude": 13.818668365478516,
       "longitude": 99.86474609375,
-      "waterLevelMeters": 3.2,
+      "waterLevelMeters": 3.16,
       "previousWaterLevelMeters": 3.17,
       "bankLevelMeters": 9,
-      "dischargeCubicMetersPerSecond": 283,
-      "dischargeCapacityPercent": 38.82,
+      "dischargeCubicMetersPerSecond": 276.4,
+      "dischargeCapacityPercent": 38.4,
       "ridStatusCode": null,
-      "ridTrend": "ต่ำกว่าตลิ่ง 5.80 ม.",
+      "ridTrend": "ต่ำกว่าตลิ่ง 5.84 ม.",
       "agency": "กรมชลประทาน",
       "dataSource": "ThaiWater",
       "measuredAt": {
-        "raw": "2026-11-22 22:00 น.",
-        "iso": "2026-11-22T15:00:00.000Z",
-        "quality": "stale",
-        "ageMinutes": 416
+        "raw": "2026-11-23 08:00 น.",
+        "iso": "2026-11-23T01:00:00.000Z",
+        "quality": "current",
+        "ageMinutes": 86
       }
     },
     {
@@ -57,18 +57,18 @@
       "river": "แม่น้ำแม่กลอง",
       "latitude": 13.81866,
       "longitude": 99.86508,
-      "waterLevelMeters": 3.1,
-      "previousWaterLevelMeters": 3.1,
+      "waterLevelMeters": 3.07,
+      "previousWaterLevelMeters": 3.07,
       "bankLevelMeters": 9.56,
       "dischargeCubicMetersPerSecond": null,
-      "dischargeCapacityPercent": 31.5,
+      "dischargeCapacityPercent": 31.12,
       "ridStatusCode": null,
-      "ridTrend": "ต่ำกว่าตลิ่ง 6.46 ม.",
+      "ridTrend": "ต่ำกว่าตลิ่ง 6.49 ม.",
       "agency": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
       "dataSource": "ThaiWater",
       "measuredAt": {
-        "raw": "2026-11-23 04:40 น.",
-        "iso": "2026-11-22T21:40:00.000Z",
+        "raw": "2026-11-23 09:10 น.",
+        "iso": "2026-11-23T02:10:00.000Z",
         "quality": "current",
         "ageMinutes": 16
       }
